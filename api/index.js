@@ -78,11 +78,16 @@ const TempUser = require('./models/TempUser');
 // Test and sync database
 (async () => {
   try {
-    await sequelize.authenticate();
-    console.log('Database connection established successfully.');
-    // Use existing MySQL tables without altering structure
-    await sequelize.sync({ force: false, alter: false }); 
-    console.log('Database synced successfully.');
+    // Only connect if we have database credentials
+    if (process.env.DB_HOST && process.env.DB_NAME && process.env.DB_USER) {
+      await sequelize.authenticate();
+      console.log('Database connection established successfully.');
+      // Use existing MySQL tables without altering structure
+      await sequelize.sync({ force: false, alter: false }); 
+      console.log('Database synced successfully.');
+    } else {
+      console.warn('Database credentials not found. Skipping database connection.');
+    }
   } catch (error) {
     console.error('Database connection/sync error:', error);
     console.error('Please check your database configuration in .env file');
