@@ -46,7 +46,7 @@ function ProductList({ searchQuery, sortBy: initialSortBy, viewMode, categoryPar
               priceRange
             },
           }),
-          axios.get(`/api/categories`),
+          axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/categories`),
         ]);
         
         let fetchedProducts = productsRes.data.products || [];
