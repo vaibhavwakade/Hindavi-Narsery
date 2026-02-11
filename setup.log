@@ -1,0 +1,29 @@
+Frontend Setup Log - Fri, May 23, 2025  8:33:20 PM
+Checking for Node.js and npm...
+Node.js version: 
+npm version: 10.2.5
+Checking for src directory...
+Setting up frontend in src directory...
+Checking for package.json...
+Vite project already initialized
+Installing dependencies...
+
+up to date, audited 189 packages in 2s
+
+41 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+
+up to date, audited 189 packages in 3s
+
+41 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+Dependencies installed
+Setting up Tailwind CSS...
+npm ERR! could not determine executable to run
+
+npm ERR! A complete log of this run can be found in: C:\Users\HP\AppData\Local\npm-cache\_logs\2025-05-23T15_03_44_966Z-debug-0.log
+[ERROR] Tailwind CSS initialization failed. Check setup.log for details.
