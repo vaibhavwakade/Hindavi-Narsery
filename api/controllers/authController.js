@@ -33,11 +33,11 @@ exports.signup = async (req, res, next) => {
         return res.status(400).json({ message: 'Email already registered' });
       }
 
-      const hashedPassword = await bcrypt.hash(password, 10);
+      // Password will be automatically hashed by User model hook
       const newUser = await User.create({
         name,
         email,
-        password: hashedPassword,
+        password, // Don't hash here - model hook will handle it
       });
 
       const token = jwt.sign(
@@ -115,11 +115,10 @@ exports.signup = async (req, res, next) => {
       } catch (emailError) {
         console.error('Email sending failed:', emailError);
         // Fall back to direct signup
-        const hashedPassword = await bcrypt.hash(password, 10);
         const newUser = await User.create({
           name,
           email,
-          password: hashedPassword,
+          password, // Model hook will hash this
         });
 
         const token = jwt.sign(
@@ -147,11 +146,10 @@ exports.signup = async (req, res, next) => {
         return res.status(400).json({ message: 'Invalid OTP' });
       }
 
-      const hashedPassword = await bcrypt.hash(tempUser.password, 10);
       const user = await User.create({
         name: tempUser.name,
         email: tempUser.email,
-        password: hashedPassword
+        password: tempUser.password // Model hook will hash this
       });
 
       await TempUser.destroy({ where: { email } });
