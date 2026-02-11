@@ -3,6 +3,7 @@ import { ShoppingCart } from 'lucide-react';
 import { toast } from 'react-toastify';
 import axios from 'axios';
 import { useState, useEffect, useRef, useContext } from 'react';
+import { API_BASE_URL } from '../config/api';
 import { CartCountContext } from '../context/cartCount';
 
 function ProductCard({ product }) {
@@ -63,7 +64,7 @@ function ProductCard({ product }) {
         return;
       }
       await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/api/cart/add`,
+        `${API_BASE_URL}/api/cart/add`,
         { productId: product.id, quantity: 1 },
         { headers: { Authorization: `Bearer ${token}` } }
       );

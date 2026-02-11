@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { Package, Search, Filter, Calendar, CheckCircle, Clock, Truck, XCircle } from 'lucide-react';
+import { API_BASE_URL } from '../../config/api';
 
 function AdminOrders() {
   const navigate = useNavigate();
@@ -31,7 +32,7 @@ function AdminOrders() {
         navigate('/login');
         return;
       }
-      const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/admin/orders`, {
+      const res = await axios.get(`${API_BASE_URL}/api/admin/orders`, {
         headers: { Authorization: `Bearer ${token}` },
         params: { status: statusFilter !== 'all' ? statusFilter : undefined, page, limit: 10 },
       });
@@ -65,7 +66,7 @@ function AdminOrders() {
     try {
       const token = localStorage.getItem('token');
       const res = await axios.put(
-        `${import.meta.env.VITE_BACKEND_URL}/api/orders/status/${orderId}`,
+        `${API_BASE_URL}/api/orders/status/${orderId}`,
         { status },
         { headers: { Authorization: `Bearer ${token}` } }
       );

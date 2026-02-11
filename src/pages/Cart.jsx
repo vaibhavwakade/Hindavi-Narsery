@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import { API_BASE_URL } from '../config/api';
 import { ShoppingCart, Trash2, Plus, Minus, ArrowLeft, CreditCard, ShoppingBag } from 'lucide-react';
 import CartItem from '../components/CartItem';
 import LoadingSpinner from '../components/common/LoadingSpinner';
@@ -20,7 +21,7 @@ function Cart() {
         navigate('/login');
         return;
       }
-      const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/cart`, {
+      const res = await axios.get(`${API_BASE_URL}/api/cart`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setCart(res.data);
@@ -50,7 +51,7 @@ function Cart() {
       }));
 
       const res = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/api/orders`,
+        `${API_BASE_URL}/api/orders`,
         { items },
         { headers: { Authorization: `Bearer ${token}` } }
       );

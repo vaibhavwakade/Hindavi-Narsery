@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import { API_BASE_URL } from '../config/api';
 import { 
   Package, 
   Clock, 
@@ -50,7 +51,7 @@ function Orders() {
         navigate('/login');
         return;
       }
-      const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/orders`, {
+      const res = await axios.get(`${API_BASE_URL}/api/orders`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setOrders(res.data);
@@ -122,7 +123,7 @@ function Orders() {
     try {
       const token = localStorage.getItem('token');
       await axios.put(
-        `${import.meta.env.VITE_BACKEND_URL}/api/orders/cancel/${orderId}`,
+        `${API_BASE_URL}/api/orders/cancel/${orderId}`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -145,7 +146,7 @@ function Orders() {
       }));
 
       await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/api/orders`,
+        `${API_BASE_URL}/api/orders`,
         { items: newOrderItems },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -209,7 +210,7 @@ function Orders() {
         handler: async function (response) {
           try {
             await axios.put(
-              `${import.meta.env.VITE_BACKEND_URL}/api/orders/pay/${order.id}`,
+              `${API_BASE_URL}/api/orders/pay/${order.id}`,
               {},
               { headers: { Authorization: `Bearer ${token}` } }
             );
@@ -276,7 +277,7 @@ function Orders() {
       
       // In a real implementation, you'd verify the payment with your backend
       await axios.put(
-        `${import.meta.env.VITE_BACKEND_URL}/api/orders/pay/${orderId}`,
+        `${API_BASE_URL}/api/orders/pay/${orderId}`,
         { paymentMethod: 'qrcode' },
         { headers: { Authorization: `Bearer ${token}` } }
       );

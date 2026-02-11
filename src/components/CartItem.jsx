@@ -3,6 +3,7 @@ import { Trash2 } from 'lucide-react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { CartCountContext } from '../context/cartCount';
+import { API_BASE_URL } from '../config/api';
 
 function CartItem({ item, onUpdate, onRemove }) {
   const [quantity, setQuantity] = useState(item.quantity);
@@ -12,7 +13,7 @@ function CartItem({ item, onUpdate, onRemove }) {
     try {
       const token = localStorage.getItem('token');
       await axios.put(
-        `${import.meta.env.VITE_BACKEND_URL}/api/cart/update`,
+        `${API_BASE_URL}/api/cart/update`,
         { productId: item.product.id, quantity: newQuantity },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -28,7 +29,7 @@ function CartItem({ item, onUpdate, onRemove }) {
     try {
       const token = localStorage.getItem('token');
       await axios.delete(
-        `${import.meta.env.VITE_BACKEND_URL}/api/cart/remove/${item.product.id}`,
+        `${API_BASE_URL}/api/cart/remove/${item.product.id}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       onRemove();

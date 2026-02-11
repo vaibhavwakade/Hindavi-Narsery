@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { Users, Package, ShoppingBag, DollarSign, BarChart3, TrendingUp } from 'lucide-react';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
+import { API_BASE_URL } from '../../config/api';
 
 function AdminDashboard() {
   const [loading, setLoading] = useState(true);
@@ -22,11 +23,11 @@ function AdminDashboard() {
       
       // Get basic counts from existing API endpoints
       const responses = await Promise.allSettled([
-        fetch(`${import.meta.env.VITE_BACKEND_URL}/api/products`),
-        fetch(`${import.meta.env.VITE_BACKEND_URL}/api/orders`, {
+        fetch(`${API_BASE_URL}/api/products`),
+        fetch(`${API_BASE_URL}/api/orders`, {
           headers: { Authorization: `Bearer ${token}` }
         }),
-        fetch(`${import.meta.env.VITE_BACKEND_URL}/api/categories`),
+        fetch(`${API_BASE_URL}/api/categories`),
       ]);
 
       let productCount = 0;
