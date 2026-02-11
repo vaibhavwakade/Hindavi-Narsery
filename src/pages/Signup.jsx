@@ -3,6 +3,7 @@ import { Eye, EyeOff, Mail, Lock, User, CheckCircle, ArrowRight } from 'lucide-r
 import { Link } from 'react-router-dom';
 // Import the Hindavi Nursery logo
 import logo from '../assets/images/hindavi_nursery.png';
+import { API_BASE_URL } from '../config/api';
 
 function Signup() {
   const [formData, setFormData] = useState({ name: '', email: '', password: '', confirmPassword: '' });
@@ -108,7 +109,7 @@ function Signup() {
       setIsLoading(true);
 
       try {
-        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/auth/signup`, {
+        const response = await fetch(`${API_BASE_URL}/auth/signup`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -146,7 +147,7 @@ function Signup() {
       setIsLoading(true);
 
       try {
-        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/auth/signup`, {
+        const response = await fetch(`${API_BASE_URL}/api/auth/signup`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({

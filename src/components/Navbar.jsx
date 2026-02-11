@@ -5,6 +5,7 @@ import axios from 'axios';
 // Import the logo image
 import logo from '../assets/images/hindavi_nursery.png';
 import { CartCountContext } from '../context/cartCount';
+import { API_BASE_URL } from '../config/api';
 
 function Navbar() {
   const navigate = useNavigate();
@@ -175,12 +176,12 @@ function Navbar() {
     }
   }, [isLoggedIn]);
 
-  // Fetch categories - Updated to match the ProductList pattern
+  // Fetch categories - Updated to use hardcoded backend URL
   const fetchCategories = async () => {
     try {
-      console.log({ a: import.meta.env.VITE_BACKEND_URL });
+      console.log('Fetching categories from:', `${API_BASE_URL}/api/categories`);
 
-      const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/categories`);
+      const response = await axios.get(`${API_BASE_URL}/api/categories`);
       setCategories(response.data || []);
 
       // Find the Plants category ID to use with the Plants dropdown
@@ -215,7 +216,7 @@ function Navbar() {
   const fetchCartData = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/cart`, {
+      const response = await axios.get(`${API_BASE_URL}/api/cart`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       console.log({ response });
@@ -240,7 +241,7 @@ function Navbar() {
   // Fetch user profile data
   const fetchUserData = async () => {
     try {
-      const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/auth/profile`, {
+      const response = await axios.get(`${API_BASE_URL}/api/auth/profile`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setUserData(response.data);

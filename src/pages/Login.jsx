@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { Eye, EyeOff, Mail, Lock, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 // Import the Hindavi logo
-import logo from '../assets/images/hindavi_nursery.png'; 
+import logo from '../assets/images/hindavi_nursery.png';
+import { API_BASE_URL } from '../config/api'; 
 
 function Login() {
   const [formData, setFormData] = useState({ email: '', password: '' });
@@ -46,7 +47,7 @@ function Login() {
     
     try {
       // Updated API URL to point to your backend
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/auth/login`, {
+      const response = await fetch(`${API_BASE_URL}/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

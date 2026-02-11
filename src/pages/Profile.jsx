@@ -4,6 +4,7 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import { User, Package, Lock, LogOut, Edit3, Save, X, Eye, EyeOff, ShoppingBag, Calendar, CreditCard } from 'lucide-react';
 import LoadingSpinner from '../components/common/LoadingSpinner';
+import { API_BASE_URL } from '../config/api';
 
 function Profile() {
   const navigate = useNavigate();
@@ -30,7 +31,7 @@ function Profile() {
         }
 
         // Fetch user profile
-        const userRes = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/auth/profile`, {
+        const userRes = await axios.get(`${API_BASE_URL}/api/auth/profile`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setUser(userRes.data);
@@ -61,7 +62,7 @@ function Profile() {
     try {
       setLoading(true);
       const res = await axios.put(
-        `${import.meta.env.VITE_BACKEND_URL}/api/auth/profile`,
+        `${API_BASE_URL}/api/auth/profile`,
         formData,
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -88,7 +89,7 @@ function Profile() {
     try {
       setLoading(true);
       await axios.put(
-        `${import.meta.env.VITE_BACKEND_URL}/api/auth/password`,
+        `${API_BASE_URL}/api/auth/password`,
         passwordData,
         { headers: { Authorization: `Bearer ${token}` } }
       );
