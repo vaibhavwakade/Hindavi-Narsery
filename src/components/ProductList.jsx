@@ -3,6 +3,7 @@ import axios from 'axios';
 import ProductCard from './ProductCard';
 import LoadingSpinner from './common/LoadingSpinner';
 import { Search, Filter, Leaf, AlertCircle } from 'lucide-react';
+import { API_BASE_URL, debugAPI } from '../config/api';
 
 function ProductList({ searchQuery, sortBy: initialSortBy, viewMode, categoryParam }) {
   const [products, setProducts] = useState([]);
@@ -38,19 +39,18 @@ function ProductList({ searchQuery, sortBy: initialSortBy, viewMode, categoryPar
         setLoading(true);
         setError(null);
         
-        // Debug: Log the backend URL
-        console.log('🔍 Backend URL:', import.meta.env.VITE_BACKEND_URL);
-        console.log('🔍 Environment variables:', import.meta.env);
+        // Debug: Call debug function
+        debugAPI();
         
         const [productsRes, categoriesRes] = await Promise.all([
-          axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/products`, {
+          axios.get(`${API_BASE_URL}/products`, {
             params: { 
               category: selectedCategory, 
               search: effectiveSearch,
               priceRange
             },
           }),
-          axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/categories`),
+          axios.get(`${API_BASE_URL}/categories`),
         ]);
         
         let fetchedProducts = productsRes.data.products || [];
