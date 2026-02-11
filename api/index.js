@@ -40,13 +40,38 @@ if (process.env.CLOUDINARY_CLOUD_NAME && process.env.CLOUDINARY_API_KEY && proce
 
 const app = express();
 
-// Middleware
-app.use(cors());
+// Middleware - CORS configuration for production
+app.use(cors({
+  origin: [
+    'http://localhost:5173',
+    'http://localhost:3000', 
+    'https://hindavi-nursery.vercel.app',
+    'https://hindavi-nursery-frontend.vercel.app',
+    'https://*.vercel.app'
+  ],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
+}));
 app.use(express.json());
 
 
 // ✅ Serve static files like the logo
 app.use('/public', express.static(path.join(__dirname, 'public')));
+
+// Test route
+app.get('/api/test', (req, res) => {
+  res.json({ 
+    message: 'Backend API is working!', 
+    timestamp: new Date().toISOString(),
+    env: process.env.NODE_ENV || 'development'
+  });
+});
+
+// Health check route
+app.get('/health', (req, res) => {
+  res.json({ status: 'OK', message: 'Server is running' });
+});
 
 
 // Routes

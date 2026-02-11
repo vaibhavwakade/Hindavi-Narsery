@@ -38,6 +38,10 @@ function ProductList({ searchQuery, sortBy: initialSortBy, viewMode, categoryPar
         setLoading(true);
         setError(null);
         
+        // Debug: Log the backend URL
+        console.log('🔍 Backend URL:', import.meta.env.VITE_BACKEND_URL);
+        console.log('🔍 Environment variables:', import.meta.env);
+        
         const [productsRes, categoriesRes] = await Promise.all([
           axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/products`, {
             params: { 
