@@ -42,13 +42,27 @@ const app = express();
 
 // Middleware - CORS configuration for production
 app.use(cors({
-  origin: [
-    'http://localhost:5173',
-    'http://localhost:3000', 
-    'https://hindavi-nursery.vercel.app',
-    'https://hindavi-nursery-frontend.vercel.app',
-    'https://*.vercel.app'
-  ],
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    // List of allowed origins
+    const allowedOrigins = [
+      'http://localhost:5173',
+      'http://localhost:3000',
+      'https://hindavi-nursery.vercel.app',
+      'https://hindavi-nursery-frontend.vercel.app'
+    ];
+    
+    // Allow any vercel.app domain
+    if (origin.includes('.vercel.app') || allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    
+    // Block other origins
+    const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+    return callback(new Error(msg), false);
+  },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true
@@ -65,6 +79,32 @@ app.get('/api/test', (req, res) => {
     message: 'Backend API is working!', 
     timestamp: new Date().toISOString(),
     env: process.env.NODE_ENV || 'development'
+  });
+});
+
+// Health check route
+app.get('/api/health', (req, res) => {
+  res.json({ 
+    status: 'ok',
+    message: 'Server is running',
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Root route for API
+app.get('/api', (req, res) => {
+  res.json({
+    message: 'Hindavi Nursery API',
+    version: '1.0.0',
+    endpoints: [
+      '/api/health',
+      '/api/test', 
+      '/api/auth',
+      '/api/products', 
+      '/api/categories',
+      '/api/orders',
+      '/api/admin'
+    ]
   });
 });
 
