@@ -1,33 +1,42 @@
-import { useState, useEffect } from 'react';
-import axios from 'axios';
-import { toast } from 'react-toastify';
-import { Leaf, Edit, Trash2, Plus, X, Save, RefreshCw, AlertCircle } from 'lucide-react';
+import { useState, useEffect } from "react";
+import axios from "axios";
+import { toast } from "react-toastify";
+import {
+  Leaf,
+  Edit,
+  Trash2,
+  Plus,
+  X,
+  Save,
+  RefreshCw,
+  AlertCircle,
+} from "lucide-react";
 
 function AddCategory() {
   // State for new category form
   const [categoryData, setCategoryData] = useState({
-    name: '',
-    description: '',
-    type: '',
+    name: "",
+    description: "",
+    type: "",
   });
 
   // State for edit form
   const [editingCategory, setEditingCategory] = useState(null);
   const [editFormData, setEditFormData] = useState({
-    name: '',
-    description: '',
-    type: '',
+    name: "",
+    description: "",
+    type: "",
   });
 
   // State for all categories
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-  const [categoryError, setCategoryError] = useState('');
-  const [categorySuccess, setCategorySuccess] = useState('');
+  const [categoryError, setCategoryError] = useState("");
+  const [categorySuccess, setCategorySuccess] = useState("");
   const [deleteConfirm, setDeleteConfirm] = useState(null);
 
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem("token");
 
   // Fetch all categories on component mount
   useEffect(() => {
@@ -37,11 +46,13 @@ function AddCategory() {
   const fetchCategories = async () => {
     try {
       setRefreshing(true);
-      const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/categories`);
+      const response = await axios.get(
+        `${import.meta.env.VITE_BACKEND_URL}/categories`,
+      );
       setCategories(response.data);
     } catch (error) {
-      toast.error('Failed to fetch categories');
-      console.error('Error fetching categories:', error);
+      toast.error("Failed to fetch categories");
+      console.error("Error fetching categories:", error);
     } finally {
       setRefreshing(false);
     }
@@ -58,35 +69,41 @@ function AddCategory() {
   };
 
   const handleCategorySubmit = async () => {
-    setCategoryError('');
-    setCategorySuccess('');
+    setCategoryError("");
+    setCategorySuccess("");
     setLoading(true);
 
     if (!token) {
-      setCategoryError('You must be logged in as admin to create a category');
+      setCategoryError("You must be logged in as admin to create a category");
       setLoading(false);
       return;
     }
 
     if (!categoryData.name || !categoryData.type) {
-      setCategoryError('Name and type are required');
+      setCategoryError("Name and type are required");
       setLoading(false);
       return;
     }
 
     try {
-      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/categories`, categoryData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/categories`,
+        categoryData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         },
-      });
+      );
       setCategorySuccess(response.data.message);
-      setCategoryData({ name: '', description: '', type: '' });
-      toast.success('Category added successfully');
+      setCategoryData({ name: "", description: "", type: "" });
+      toast.success("Category added successfully");
       fetchCategories(); // Refresh the list
     } catch (error) {
-      setCategoryError(error.response?.data?.message || 'Error creating category');
-      toast.error(error.response?.data?.message || 'Error creating category');
+      setCategoryError(
+        error.response?.data?.message || "Error creating category",
+      );
+      toast.error(error.response?.data?.message || "Error creating category");
     } finally {
       setLoading(false);
     }
@@ -96,43 +113,49 @@ function AddCategory() {
     setEditingCategory(category._id);
     setEditFormData({
       name: category.name,
-      description: category.description || '',
-      type: category.type || '',
+      description: category.description || "",
+      type: category.type || "",
     });
   };
 
   const cancelEditing = () => {
     setEditingCategory(null);
-    setEditFormData({ name: '', description: '', type: '' });
+    setEditFormData({ name: "", description: "", type: "" });
   };
 
   const saveEdit = async (categoryId) => {
     if (!token) {
-      toast.error('You must be logged in as admin to edit a category');
+      toast.error("You must be logged in as admin to edit a category");
       return;
     }
 
     if (!editFormData.name || !editFormData.type) {
-      toast.error('Name and type are required');
+      toast.error("Name and type are required");
       return;
     }
 
     try {
-      const response = await axios.put(`${import.meta.env.VITE_BACKEND_URL}/api/categories/${categoryId}`, editFormData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
+      const response = await axios.put(
+        `${import.meta.env.VITE_BACKEND_URL}/categories/${categoryId}`,
+        editFormData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         },
-      });
+      );
 
       // Update the local state to reflect changes
-      setCategories(categories.map(cat =>
-        cat._id === categoryId ? { ...cat, ...editFormData } : cat
-      ));
+      setCategories(
+        categories.map((cat) =>
+          cat._id === categoryId ? { ...cat, ...editFormData } : cat,
+        ),
+      );
 
-      toast.success('Category updated successfully');
+      toast.success("Category updated successfully");
       cancelEditing();
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Error updating category');
+      toast.error(error.response?.data?.message || "Error updating category");
     }
   };
 
@@ -146,32 +169,32 @@ function AddCategory() {
 
   const deleteCategory = async (categoryId) => {
     if (!token) {
-      toast.error('You must be logged in as admin to delete a category');
+      toast.error("You must be logged in as admin to delete a category");
       return;
     }
 
     try {
       // Add debugging to see what's happening
-      console.log(`Attempting to delete category with ID: ${categoryId}`);
-      console.log(`Using Authorization token: Bearer ${token.substring(0, 10)}...`);
+      const response = await axios.delete(
+        `${import.meta.env.VITE_BACKEND_URL}/categories/${categoryId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
 
-      const response = await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/api/categories/${categoryId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
-
-      console.log('Delete response:', response.data);
+      console.log("Delete response:", response.data);
 
       // Remove the category from the local state
-      setCategories(categories.filter(cat => cat._id !== categoryId));
+      setCategories(categories.filter((cat) => cat._id !== categoryId));
 
-      toast.success('Category deleted successfully');
+      toast.success("Category deleted successfully");
       setDeleteConfirm(null);
     } catch (error) {
-      console.error('Error deleting category:', error);
-      console.error('Error response:', error.response?.data);
-      toast.error(error.response?.data?.message || 'Error deleting category');
+      console.error("Error deleting category:", error);
+      console.error("Error response:", error.response?.data);
+      toast.error(error.response?.data?.message || "Error deleting category");
     }
   };
 
@@ -203,7 +226,12 @@ function AddCategory() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <label htmlFor="categoryName" className="block text-sm font-medium text-gray-700">Category Name *</label>
+            <label
+              htmlFor="categoryName"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Category Name *
+            </label>
             <input
               type="text"
               id="categoryName"
@@ -217,7 +245,12 @@ function AddCategory() {
           </div>
 
           <div>
-            <label htmlFor="categoryType" className="block text-sm font-medium text-gray-700">Category Type *</label>
+            <label
+              htmlFor="categoryType"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Category Type *
+            </label>
             <select
               id="categoryType"
               name="type"
@@ -239,7 +272,12 @@ function AddCategory() {
           </div>
 
           <div>
-            <label htmlFor="categoryDescription" className="block text-sm font-medium text-gray-700">Description</label>
+            <label
+              htmlFor="categoryDescription"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Description
+            </label>
             <input
               type="text"
               id="categoryDescription"
@@ -285,8 +323,10 @@ function AddCategory() {
             className="flex items-center text-sm text-green-600 hover:text-green-800"
             disabled={refreshing}
           >
-            <RefreshCw className={`h-4 w-4 mr-1 ${refreshing ? 'animate-spin' : ''}`} />
-            {refreshing ? 'Refreshing...' : 'Refresh'}
+            <RefreshCw
+              className={`h-4 w-4 mr-1 ${refreshing ? "animate-spin" : ""}`}
+            />
+            {refreshing ? "Refreshing..." : "Refresh"}
           </button>
         </div>
 
@@ -299,23 +339,42 @@ function AddCategory() {
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
                     Name
                   </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
                     Type
                   </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
                     Description
                   </th>
-                  <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
                     Actions
                   </th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {categories.map(category => (
-                  <tr key={category._id} className={editingCategory === category._id ? 'bg-green-50' : 'hover:bg-gray-50'}>
+                {categories.map((category) => (
+                  <tr
+                    key={category._id}
+                    className={
+                      editingCategory === category._id
+                        ? "bg-green-50"
+                        : "hover:bg-gray-50"
+                    }
+                  >
                     {editingCategory === category._id ? (
                       // Edit mode
                       <>
@@ -386,18 +445,20 @@ function AddCategory() {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                           <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                            {category.type || 'N/A'}
+                            {category.type || "N/A"}
                           </span>
                         </td>
                         <td className="px-6 py-4 text-sm text-gray-500 max-w-xs truncate">
-                          {category.description || 'No description provided'}
+                          {category.description || "No description provided"}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                           {deleteConfirm === category._id ? (
                             <div className="flex justify-end items-center space-x-2">
-                              <span className="text-red-600 text-xs font-medium">Confirm?</span>
+                              <span className="text-red-600 text-xs font-medium">
+                                Confirm?
+                              </span>
                               <button
-                                onClick={() => deleteCategory(category._id)}
+                                onClick={() => deleteCategory(category.id)}
                                 className="text-white bg-red-600 p-1 rounded-full hover:bg-red-700"
                                 title="Confirm delete"
                               >

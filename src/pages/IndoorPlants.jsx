@@ -1,16 +1,16 @@
-import { useState, useEffect } from 'react';
-import axios from 'axios';
-import ProductCard from '../components/ProductCard';
-import LoadingSpinner from '../components/common/LoadingSpinner';
-import { Search, Leaf, AlertCircle } from 'lucide-react';
+import { useState, useEffect } from "react";
+import axios from "axios";
+import ProductCard from "../components/ProductCard";
+import LoadingSpinner from "../components/common/LoadingSpinner";
+import { Search, Leaf, AlertCircle } from "lucide-react";
 
 function ProductList({ searchQuery, sortBy: initialSortBy, viewMode }) {
   const [products, setProducts] = useState([]);
-  const [localSearch, setLocalSearch] = useState('');
+  const [localSearch, setLocalSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [favorites, setFavorites] = useState([]);
-  const [sortBy, setSortBy] = useState(initialSortBy || 'price-low');
+  const [sortBy, setSortBy] = useState(initialSortBy || "price-low");
 
   // Use searchQuery from props if provided, otherwise use local search
   const effectiveSearch = (searchQuery || localSearch).toLowerCase().trim();
@@ -30,14 +30,17 @@ function ProductList({ searchQuery, sortBy: initialSortBy, viewMode }) {
 
         // Fetch products with fixed indoor category ID and type filter
         const params = {
-          category: '68420523c50a7a90358ac22f', // Indoor category ID
+          category: "1", // Indoor category ID
         };
         // Only add type filter if searchQuery is not "indoor" to avoid over-filtering
-        if (effectiveSearch && effectiveSearch !== 'indoor') {
+        if (effectiveSearch && effectiveSearch !== "indoor") {
           params.type = effectiveSearch;
         }
 
-        const productsRes = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/products`, { params });
+        const productsRes = await axios.get(
+          `${import.meta.env.VITE_BACKEND_URL}/products`,
+          { params },
+        );
 
         let fetchedProducts = productsRes.data.products || [];
 
@@ -46,8 +49,8 @@ function ProductList({ searchQuery, sortBy: initialSortBy, viewMode }) {
 
         setProducts(fetchedProducts);
       } catch (error) {
-        console.error('Error fetching data:', error);
-        setError('Failed to load indoor plants. Please try again.');
+        console.error("Error fetching data:", error);
+        setError("Failed to load indoor plants. Please try again.");
       } finally {
         setLoading(false);
       }
@@ -59,13 +62,13 @@ function ProductList({ searchQuery, sortBy: initialSortBy, viewMode }) {
   const sortProducts = (products, sortType) => {
     const sortedProducts = [...products];
     switch (sortType) {
-      case 'price-low':
+      case "price-low":
         return sortedProducts.sort((a, b) => a.price - b.price);
-      case 'price-high':
+      case "price-high":
         return sortedProducts.sort((a, b) => b.price - a.price);
-      case 'popularity':
+      case "popularity":
         return sortedProducts.sort((a, b) => (b.rating || 0) - (a.rating || 0));
-      case 'name':
+      case "name":
         return sortedProducts.sort((a, b) => a.name.localeCompare(b.name));
       default:
         return sortedProducts;
@@ -73,7 +76,7 @@ function ProductList({ searchQuery, sortBy: initialSortBy, viewMode }) {
   };
 
   const clearSearch = () => {
-    setLocalSearch('');
+    setLocalSearch("");
   };
 
   if (loading) {
@@ -85,7 +88,9 @@ function ProductList({ searchQuery, sortBy: initialSortBy, viewMode }) {
             <Leaf className="w-6 h-6 text-green-500 animate-pulse" />
           </div>
         </div>
-        <p className="mt-4 text-green-600 font-medium">Growing your indoor plant collection...</p>
+        <p className="mt-4 text-green-600 font-medium">
+          Growing your indoor plant collection...
+        </p>
       </div>
     );
   }
@@ -96,9 +101,11 @@ function ProductList({ searchQuery, sortBy: initialSortBy, viewMode }) {
         <div className="bg-red-100 rounded-full p-4 mb-4">
           <AlertCircle className="w-8 h-8 text-red-600" />
         </div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">Oops! Something went wrong</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-2">
+          Oops! Something went wrong
+        </h3>
         <p className="text-gray-600 mb-4">{error}</p>
-        <button 
+        <button
           onClick={() => window.location.reload()}
           className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors"
         >
@@ -109,7 +116,7 @@ function ProductList({ searchQuery, sortBy: initialSortBy, viewMode }) {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 px-4 py-8">
       {/* Search Input */}
       {!searchQuery && (
         <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-6 border border-green-200">
@@ -139,8 +146,11 @@ function ProductList({ searchQuery, sortBy: initialSortBy, viewMode }) {
         <div className="flex items-center gap-2">
           <Leaf className="w-5 h-5 text-green-600" />
           <span className="text-gray-700">
-            {products.length} indoor plant{products.length !== 1 ? 's' : ''} found
-            {effectiveSearch && effectiveSearch !== 'indoor' && ` for "${effectiveSearch}"`}
+            {products.length} indoor plant{products.length !== 1 ? "s" : ""}{" "}
+            found
+            {effectiveSearch &&
+              effectiveSearch !== "indoor" &&
+              ` for "${effectiveSearch}"`}
           </span>
         </div>
 
@@ -165,17 +175,24 @@ function ProductList({ searchQuery, sortBy: initialSortBy, viewMode }) {
 
       {/* Products Grid/List */}
       {products.length > 0 ? (
-        <div className={`
-          ${viewMode === 'list' 
-            ? 'space-y-4' 
-            : 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6'
+        <div
+          className={`
+          ${
+            viewMode === "list"
+              ? "space-y-4"
+              : "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
           }
-        `}>
+        `}
+        >
           {products.map((product) => (
             <div key={product.id} className="group relative">
-              <div className={viewMode === 'list' ? 'transform hover:scale-[1.02]' : ''}>
-                <ProductCard 
-                  product={product} 
+              <div
+                className={
+                  viewMode === "list" ? "transform hover:scale-[1.02]" : ""
+                }
+              >
+                <ProductCard
+                  product={product}
                   viewMode={viewMode}
                   isFavorite={favorites.includes(product.id)}
                 />
@@ -188,22 +205,25 @@ function ProductList({ searchQuery, sortBy: initialSortBy, viewMode }) {
           <div className="bg-green-100 rounded-full p-6 w-24 h-24 mx-auto mb-4 flex items-center justify-center">
             <Leaf className="w-10 h-10 text-green-600" />
           </div>
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">No indoor plants found</h3>
+          <h3 className="text-xl font-semibold text-gray-900 mb-2">
+            No indoor plants found
+          </h3>
           <p className="text-gray-600 mb-6">
-            {effectiveSearch && effectiveSearch !== 'indoor'
+            {effectiveSearch && effectiveSearch !== "indoor"
               ? `We couldn't find any indoor plants matching "${effectiveSearch}"`
-              : "No indoor plants match your current search"
-            }
+              : "No indoor plants match your current search"}
           </p>
           <div className="space-y-2">
             <p className="text-sm text-gray-500">Try:</p>
             <ul className="text-sm text-gray-600 space-y-1">
               <li>• Checking your spelling</li>
-              <li>• Using different keywords (e.g., tulsi, money, succulent)</li>
+              <li>
+                • Using different keywords (e.g., tulsi, money, succulent)
+              </li>
               <li>• Browsing all indoor plants</li>
             </ul>
           </div>
-          {effectiveSearch && effectiveSearch !== 'indoor' && (
+          {effectiveSearch && effectiveSearch !== "indoor" && (
             <button
               onClick={clearSearch}
               className="mt-6 bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors"

@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { toast } from 'react-toastify';
-import { Package, Upload, Save, X } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { toast } from "react-toastify";
+import { Package, Upload, Save, X } from "lucide-react";
 
 const ProductForm = () => {
   const navigate = useNavigate();
@@ -10,12 +10,12 @@ const ProductForm = () => {
   const [categories, setCategories] = useState([]);
   const [filePreview, setFilePreview] = useState([]);
   const [productData, setProductData] = useState({
-    name: '',
-    description: '',
-    price: '',
-    category: '',
-    stock: '',
-    size: '', // We'll keep this as a free text field
+    name: "",
+    description: "",
+    price: "",
+    category: "",
+    stock: "",
+    size: "", // We'll keep this as a free text field
   });
 
   // Remove size options since we're using a text input now
@@ -26,11 +26,13 @@ const ProductForm = () => {
 
   const fetchCategories = async () => {
     try {
-      const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/categories`);
+      const res = await axios.get(
+        `${import.meta.env.VITE_BACKEND_URL}/categories`,
+      );
       setCategories(res.data);
     } catch (error) {
-      toast.error('Failed to load categories');
-      console.error('Error fetching categories:', error);
+      toast.error("Failed to load categories");
+      console.error("Error fetching categories:", error);
     }
   };
 
@@ -46,10 +48,10 @@ const ProductForm = () => {
     const files = Array.from(e.target.files);
 
     // Create preview URLs for display
-    const newPreviews = files.map(file => ({
+    const newPreviews = files.map((file) => ({
       url: URL.createObjectURL(file),
       name: file.name,
-      size: (file.size / 1024).toFixed(1) // Convert to KB
+      size: (file.size / 1024).toFixed(1), // Convert to KB
     }));
 
     setFilePreview(newPreviews);
@@ -61,9 +63,9 @@ const ProductForm = () => {
     setFilePreview(newPreviews);
 
     // Reset the file input
-    const fileInput = document.getElementById('product-images');
+    const fileInput = document.getElementById("product-images");
     if (fileInput) {
-      fileInput.value = '';
+      fileInput.value = "";
     }
   };
 
@@ -71,53 +73,58 @@ const ProductForm = () => {
     e.preventDefault();
 
     // Simple validation
-    if (!productData.name || !productData.price || !productData.category || !productData.stock) {
-      toast.error('Please fill in all required fields');
+    if (
+      !productData.name ||
+      !productData.price ||
+      !productData.category ||
+      !productData.stock
+    ) {
+      toast.error("Please fill in all required fields");
       return;
     }
 
     try {
       setLoading(true);
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
 
       if (!token) {
-        toast.error('Please login as admin');
-        navigate('/login');
+        toast.error("Please login as admin");
+        navigate("/login");
         return;
       }
 
       const formData = new FormData();
-      formData.append('name', productData.name);
-      formData.append('description', productData.description);
-      formData.append('price', productData.price);
-      formData.append('category', productData.category);
-      formData.append('stock', productData.stock);
-      formData.append('size', productData.size);
+      formData.append("name", productData.name);
+      formData.append("description", productData.description);
+      formData.append("price", productData.price);
+      formData.append("category", productData.category);
+      formData.append("stock", productData.stock);
+      formData.append("size", productData.size);
 
       // Add files to the form data
-      const fileInput = document.getElementById('product-images');
+      const fileInput = document.getElementById("product-images");
       if (fileInput && fileInput.files.length > 0) {
         for (let i = 0; i < fileInput.files.length; i++) {
-          formData.append('images', fileInput.files[i]);
+          formData.append("images", fileInput.files[i]);
         }
       }
 
       const res = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/api/products`,
+        `${import.meta.env.VITE_BACKEND_URL}/products`,
         formData,
         {
           headers: {
             Authorization: `Bearer ${token}`,
-            'Content-Type': 'multipart/form-data',
+            "Content-Type": "multipart/form-data",
           },
-        }
+        },
       );
 
-      toast.success('Product added successfully');
-      navigate('/admin/products');
+      toast.success("Product added successfully");
+      navigate("/admin/create-product");
     } catch (error) {
-      console.error('Error creating product:', error);
-      toast.error(error.response?.data?.message || 'Failed to add product');
+      console.error("Error creating product:", error);
+      toast.error(error.response?.data?.message || "Failed to add product");
     } finally {
       setLoading(false);
     }
@@ -129,7 +136,9 @@ const ProductForm = () => {
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center">
             <Package className="h-6 w-6 text-green-600 mr-2" />
-            <h2 className="text-2xl font-bold text-gray-800">Add New Product</h2>
+            <h2 className="text-2xl font-bold text-gray-800">
+              Add New Product
+            </h2>
           </div>
         </div>
         <p className="text-gray-600">
@@ -141,11 +150,16 @@ const ProductForm = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Left column - Product Details */}
           <div className="space-y-6">
-            <h3 className="text-lg font-semibold text-gray-700 border-b pb-2">Product Details</h3>
+            <h3 className="text-lg font-semibold text-gray-700 border-b pb-2">
+              Product Details
+            </h3>
 
             {/* Product Name */}
             <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                htmlFor="name"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
                 Product Name <span className="text-red-500">*</span>
               </label>
               <input
@@ -162,7 +176,10 @@ const ProductForm = () => {
 
             {/* Product Category */}
             <div>
-              <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                htmlFor="category"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
                 Category <span className="text-red-500">*</span>
               </label>
               <select
@@ -185,7 +202,10 @@ const ProductForm = () => {
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               {/* Price */}
               <div className="sm:col-span-1">
-                <label htmlFor="price" className="block text-sm font-medium text-gray-700 mb-1">
+                <label
+                  htmlFor="price"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
                   Price (₹) <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
@@ -209,7 +229,10 @@ const ProductForm = () => {
 
               {/* Stock */}
               <div className="sm:col-span-1">
-                <label htmlFor="stock" className="block text-sm font-medium text-gray-700 mb-1">
+                <label
+                  htmlFor="stock"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
                   Stock <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -227,7 +250,10 @@ const ProductForm = () => {
 
               {/* Size - Changed from dropdown to text input */}
               <div className="sm:col-span-1">
-                <label htmlFor="size" className="block text-sm font-medium text-gray-700 mb-1">
+                <label
+                  htmlFor="size"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
                   Size
                 </label>
                 <input
@@ -247,7 +273,10 @@ const ProductForm = () => {
 
             {/* Description */}
             <div>
-              <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                htmlFor="description"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
                 Description
               </label>
               <textarea
@@ -260,19 +289,24 @@ const ProductForm = () => {
                 placeholder="Enter detailed product description..."
               ></textarea>
               <p className="text-xs text-gray-500 mt-1">
-                Write a comprehensive description to help customers understand the product better.
+                Write a comprehensive description to help customers understand
+                the product better.
               </p>
             </div>
           </div>
 
           {/* Right column - Images & Submit */}
           <div className="space-y-6">
-            <h3 className="text-lg font-semibold text-gray-700 border-b pb-2">Product Images</h3>
+            <h3 className="text-lg font-semibold text-gray-700 border-b pb-2">
+              Product Images
+            </h3>
 
             {/* Image Upload */}
             <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 flex flex-col items-center justify-center bg-gray-50 hover:bg-gray-100 transition-colors">
               <Upload className="h-12 w-12 text-gray-400 mb-2" />
-              <p className="text-sm text-gray-600 mb-2">Drag and drop your product images here</p>
+              <p className="text-sm text-gray-600 mb-2">
+                Drag and drop your product images here
+              </p>
               <p className="text-xs text-gray-500 mb-4">or</p>
               <label className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 cursor-pointer transition-colors">
                 <span>Browse Files</span>
@@ -293,7 +327,9 @@ const ProductForm = () => {
             {/* Preview Images */}
             {filePreview.length > 0 && (
               <div>
-                <h4 className="text-sm font-medium text-gray-700 mb-2">Selected Images</h4>
+                <h4 className="text-sm font-medium text-gray-700 mb-2">
+                  Selected Images
+                </h4>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                   {filePreview.map((file, index) => (
                     <div key={index} className="relative group">
@@ -326,7 +362,7 @@ const ProductForm = () => {
               <div className="flex items-center justify-end space-x-3">
                 <button
                   type="button"
-                  onClick={() => navigate('/admin/products')}
+                  onClick={() => navigate("/admin/products")}
                   className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
                 >
                   Cancel
@@ -338,9 +374,25 @@ const ProductForm = () => {
                 >
                   {loading ? (
                     <>
-                      <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      <svg
+                        className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        ></circle>
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        ></path>
                       </svg>
                       Saving...
                     </>

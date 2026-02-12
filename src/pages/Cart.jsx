@@ -1,11 +1,18 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { toast } from 'react-toastify';
-import { API_BASE_URL } from '../config/api';
-import { ShoppingCart, Trash2, Plus, Minus, ArrowLeft, CreditCard, ShoppingBag } from 'lucide-react';
-import CartItem from '../components/CartItem';
-import LoadingSpinner from '../components/common/LoadingSpinner';
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { toast } from "react-toastify";
+import {
+  ShoppingCart,
+  Trash2,
+  Plus,
+  Minus,
+  ArrowLeft,
+  CreditCard,
+  ShoppingBag,
+} from "lucide-react";
+import CartItem from "../components/CartItem";
+import LoadingSpinner from "../components/common/LoadingSpinner";
 
 function Cart() {
   const navigate = useNavigate();
@@ -15,19 +22,19 @@ function Cart() {
 
   const fetchCart = async () => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       if (!token) {
-        toast.error('Please login to view cart');
-        navigate('/login');
+        toast.error("Please login to view cart");
+        navigate("/login");
         return;
       }
-      const res = await axios.get(`${API_BASE_URL}/api/cart`, {
+      const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/cart`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setCart(res.data);
     } catch (error) {
-      console.error('Error fetching cart:', error);
-      toast.error(error.response?.data?.message || 'Failed to load cart');
+      console.error("Error fetching cart:", error);
+      toast.error(error.response?.data?.message || "Failed to load cart");
     } finally {
       setLoading(false);
     }
@@ -38,36 +45,36 @@ function Cart() {
   }, [navigate]);
 
   const handleCreateOrder = async () => {
-    if (!window.confirm('Are you sure you want to place this order?')) {
+    if (!window.confirm("Are you sure you want to place this order?")) {
       return;
     }
 
     setProcessingOrder(true);
     try {
-      const token = localStorage.getItem('token');
-      const items = cart.cart.items.map(item => ({
+      const token = localStorage.getItem("token");
+      const items = cart.cart.items.map((item) => ({
         productId: item.product.id,
         quantity: item.quantity,
       }));
 
       const res = await axios.post(
-        `${API_BASE_URL}/api/orders`,
+        `${import.meta.env.VITE_BACKEND_URL}/orders`,
         { items },
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { Authorization: `Bearer ${token}` } },
       );
-      toast.success('Order created successfully');
+      toast.success("Order created successfully");
       setCart(null); // Clear cart locally
-      navigate('/orders');
+      navigate("/orders");
     } catch (error) {
-      console.error('Error creating order:', error);
-      toast.error(error.response?.data?.message || 'Failed to create order');
+      console.error("Error creating order:", error);
+      toast.error(error.response?.data?.message || "Failed to create order");
     } finally {
       setProcessingOrder(false);
     }
   };
 
   const handleContinueShopping = () => {
-    navigate('/products');
+    navigate("/products");
   };
 
   if (loading) {
@@ -83,7 +90,9 @@ function Cart() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="max-w-4xl mx-auto px-4 py-16 text-center">
           <ShoppingBag className="mx-auto h-24 w-24 text-gray-300 mb-4" />
-          <h1 className="text-3xl font-bold text-gray-900 mb-4">Your cart is empty</h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-4">
+            Your cart is empty
+          </h1>
           <p className="text-lg text-gray-600 mb-8">
             Looks like you haven't added any items to your cart yet.
           </p>
@@ -102,7 +111,7 @@ function Cart() {
   const calculateTotal = () => {
     const subtotal = cart.cart.items.reduce(
       (total, item) => total + item.product.price * item.quantity,
-      0
+      0,
     );
     const tax = subtotal * 0.1; // 10% tax
     return (subtotal + tax).toFixed(2);
@@ -124,7 +133,8 @@ function Cart() {
             <ShoppingCart className="mr-3 h-8 w-8 text-gray-700" />
             <h1 className="text-3xl font-bold text-gray-900">Shopping Cart</h1>
             <span className="ml-3 px-3 py-1 bg-blue-100 text-blue-800 text-sm font-medium rounded-full">
-              {cart.cart.items.length} {cart.cart.items.length === 1 ? 'Item' : 'Items'}
+              {cart.cart.items.length}{" "}
+              {cart.cart.items.length === 1 ? "Item" : "Items"}
             </span>
           </div>
         </div>
@@ -134,7 +144,9 @@ function Cart() {
           <div className="lg:col-span-2">
             <div className="bg-white rounded-lg shadow-sm border border-gray-200">
               <div className="p-6 border-b border-gray-200">
-                <h2 className="text-lg font-semibold text-gray-900">Cart Items</h2>
+                <h2 className="text-lg font-semibold text-gray-900">
+                  Cart Items
+                </h2>
               </div>
               <div className="divide-y divide-gray-200">
                 {cart.cart.items.map((item) => (
@@ -154,7 +166,9 @@ function Cart() {
           <div className="lg:col-span-1">
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 sticky top-8">
               <div className="p-6 border-b border-gray-200">
-                <h2 className="text-lg font-semibold text-gray-900">Order Summary</h2>
+                <h2 className="text-lg font-semibold text-gray-900">
+                  Order Summary
+                </h2>
               </div>
 
               <div className="p-6">
@@ -162,7 +176,10 @@ function Cart() {
                   {/* Item breakdown */}
                   <div className="space-y-2">
                     {cart.cart.items.map((item) => (
-                      <div key={item.product.id} className="flex justify-between text-sm">
+                      <div
+                        key={item.product.id}
+                        className="flex justify-between text-sm"
+                      >
                         <span className="text-gray-600">
                           {item.product?.name} × {item.quantity}
                         </span>
@@ -176,7 +193,9 @@ function Cart() {
                   <div className="border-t border-gray-200 pt-4">
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-600">Subtotal</span>
-                      <span className="text-gray-900">₹{cart.total.toFixed(2)}</span>
+                      <span className="text-gray-900">
+                        ₹{cart.total.toFixed(2)}
+                      </span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-600">Shipping</span>
@@ -184,13 +203,17 @@ function Cart() {
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-600">Tax (10%)</span>
-                      <span className="text-gray-900">₹{(cart.total * 0.1).toFixed(2)}</span>
+                      <span className="text-gray-900">
+                        ₹{(cart.total * 0.1).toFixed(2)}
+                      </span>
                     </div>
                   </div>
 
                   <div className="border-t border-gray-200 pt-4">
                     <div className="flex justify-between">
-                      <span className="text-lg font-semibold text-gray-900">Total</span>
+                      <span className="text-lg font-semibold text-gray-900">
+                        Total
+                      </span>
                       <span className="text-lg font-semibold text-gray-900">
                         ₹{calculateTotal()}
                       </span>
@@ -227,7 +250,9 @@ function Cart() {
             {/* Trust indicators */}
             <div className="mt-6 bg-blue-50 rounded-lg p-4">
               <div className="text-center">
-                <h3 className="text-sm font-medium text-blue-900 mb-2">Why shop with us?</h3>
+                <h3 className="text-sm font-medium text-blue-900 mb-2">
+                  Why shop with us?
+                </h3>
                 <div className="space-y-1 text-xs text-blue-700">
                   <p>✓ Free shipping on all orders</p>
                   <p>✓ 30-day money-back guarantee</p>

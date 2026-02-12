@@ -24,7 +24,7 @@
 //         setLoading(true);
 //         try {
 //             const token = localStorage.getItem('token');
-//             const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/dashboard/admin/summary`, {
+//             const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/dashboard/admin/summary`, {
 //                 headers: { Authorization: `Bearer ${token}` },
 //                 params: { start, end },
 //             });
@@ -264,22 +264,22 @@ function AdminDashboard() {
 
             // Make parallel requests for better performance
             const [usersRes, ordersRes, productsRes, categoriesRes] = await Promise.all([
-                axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/admin/users?limit=1`, {
+                axios.get(`${import.meta.env.VITE_BACKEND_URL}/admin/users?limit=1`, {
                     headers: { Authorization: `Bearer ${token}` }
                 }),
-                axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/admin/orders?limit=1`, {
+                axios.get(`${import.meta.env.VITE_BACKEND_URL}/admin/orders?limit=1`, {
                     headers: { Authorization: `Bearer ${token}` }
                 }),
-                axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/products?limit=1`, {
+                axios.get(`${import.meta.env.VITE_BACKEND_URL}/products?limit=1`, {
                     headers: { Authorization: `Bearer ${token}` }
                 }),
-                axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/categories`, {
+                axios.get(`${import.meta.env.VITE_BACKEND_URL}/categories`, {
                     headers: { Authorization: `Bearer ${token}` }
                 })
             ]);
 
             // Get recent orders for the table
-            const recentOrdersRes = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/admin/orders?limit=5`, {
+            const recentOrdersRes = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/admin/orders?limit=5`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
 

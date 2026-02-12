@@ -1,10 +1,10 @@
-import { Link } from 'react-router-dom';
-import { ShoppingCart } from 'lucide-react';
-import { toast } from 'react-toastify';
-import axios from 'axios';
-import { useState, useEffect, useRef, useContext } from 'react';
-import { API_BASE_URL } from '../config/api';
-import { CartCountContext } from '../context/cartCount';
+import { Link } from "react-router-dom";
+import { ShoppingCart } from "lucide-react";
+import { toast } from "react-toastify";
+import axios from "axios";
+import { useState, useEffect, useRef, useContext } from "react";
+
+import { CartCountContext } from "../context/cartCount";
 
 function ProductCard({ product }) {
   const [isAdding, setIsAdding] = useState(false);
@@ -13,21 +13,21 @@ function ProductCard({ product }) {
   const [isImageLoading, setIsImageLoading] = useState(true);
   const [isFavorited, setIsFavorited] = useState(false);
   const intervalRef = useRef(null);
-  const { setCartCount } = useContext(CartCountContext)
+  const { setCartCount } = useContext(CartCountContext);
 
   // Ensure imageUrls is always an array
-  const imageUrls = Array.isArray(product.imageUrls) 
-    ? product.imageUrls 
-    : product.imageUrls 
-    ? [product.imageUrls] 
-    : ['https://via.placeholder.com/300x300?text=No+Image'];
+  const imageUrls = Array.isArray(product.imageUrls)
+    ? product.imageUrls
+    : product.imageUrls
+      ? [product.imageUrls]
+      : ["https://via.placeholder.com/300x300?text=No+Image"];
 
   // Auto-scroll for image carousel
   useEffect(() => {
     if (imageUrls.length > 1 && !isHovered) {
       intervalRef.current = setInterval(() => {
         setCurrentImageIndex((prevIndex) =>
-          prevIndex === imageUrls.length - 1 ? 0 : prevIndex + 1
+          prevIndex === imageUrls.length - 1 ? 0 : prevIndex + 1,
         );
       }, 5000);
     }
@@ -48,7 +48,7 @@ function ProductCard({ product }) {
       if (product.imageUrls.length > 1 && !isHovered) {
         intervalRef.current = setInterval(() => {
           setCurrentImageIndex((prevIndex) =>
-            prevIndex === product.imageUrls.length - 1 ? 0 : prevIndex + 1
+            prevIndex === product.imageUrls.length - 1 ? 0 : prevIndex + 1,
           );
         }, 5000);
       }
@@ -58,28 +58,26 @@ function ProductCard({ product }) {
   const handleAddToCart = async () => {
     try {
       setIsAdding(true);
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       if (!token) {
-        toast.error('Please login to add items to cart');
+        toast.error("Please login to add items to cart");
         return;
       }
       await axios.post(
-        `${API_BASE_URL}/api/cart/add`,
+        `${import.meta.env.VITE_BACKEND_URL}/cart/add`,
         { productId: product.id, quantity: 1 },
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { Authorization: `Bearer ${token}` } },
       );
       setCartCount((prev) => prev + 1);
 
-      toast.success('Added to cart successfully');
+      toast.success("Added to cart successfully");
       // window.location.reload();
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Failed to add to cart');
+      toast.error(error.response?.data?.message || "Failed to add to cart");
     } finally {
       setIsAdding(false);
     }
   };
-
-
 
   const handleMouseEnter = () => {
     setIsHovered(true);
@@ -106,17 +104,22 @@ function ProductCard({ product }) {
             {imageUrls.map((imageUrl, index) => (
               <div
                 key={`image-${product.id}-${index}`}
-                className={`absolute inset-0 transition-opacity duration-500 ${currentImageIndex === index ? 'opacity-100' : 'opacity-0'
-                  }`}
+                className={`absolute inset-0 transition-opacity duration-500 ${
+                  currentImageIndex === index ? "opacity-100" : "opacity-0"
+                }`}
               >
                 <Link to={`/products/${product.id}`}>
                   <img
-                    src={imageUrl || 'https://via.placeholder.com/300x300?text=No+Image'}
+                    src={
+                      imageUrl ||
+                      "https://via.placeholder.com/300x300?text=No+Image"
+                    }
                     alt={`${product.name} - Image ${index + 1}`}
                     className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                     onLoad={() => setIsImageLoading(false)}
                     onError={(e) => {
-                      e.target.src = 'https://via.placeholder.com/300x300?text=Image+Not+Found';
+                      e.target.src =
+                        "https://via.placeholder.com/300x300?text=Image+Not+Found";
                       setIsImageLoading(false);
                     }}
                   />
@@ -139,10 +142,11 @@ function ProductCard({ product }) {
                 <button
                   key={`indicator-${product.id}-${index}`}
                   onClick={() => handleImageChange(index)}
-                  className={`w-2 h-2 rounded-full transition-all duration-200 ${currentImageIndex === index
-                    ? 'bg-white shadow-sm'
-                    : 'bg-white/60 hover:bg-white/80'
-                    }`}
+                  className={`w-2 h-2 rounded-full transition-all duration-200 ${
+                    currentImageIndex === index
+                      ? "bg-white shadow-sm"
+                      : "bg-white/60 hover:bg-white/80"
+                  }`}
                 />
               ))}
             </div>
@@ -163,7 +167,12 @@ function ProductCard({ product }) {
           {/* Discount Badge */}
           {product.originalPrice && product.originalPrice > product.price && (
             <div className="absolute top-2 left-2 bg-green-500 text-white text-xs font-medium px-2 py-1 rounded">
-              {Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}% OFF
+              {Math.round(
+                ((product.originalPrice - product.price) /
+                  product.originalPrice) *
+                  100,
+              )}
+              % OFF
             </div>
           )}
         </div>
@@ -187,11 +196,13 @@ function ProductCard({ product }) {
               <span className="text-lg sm:text-xl font-bold text-gray-900">
                 ₹{parseFloat(product.price || 0).toFixed(2)}
               </span>
-              {product.originalPrice && parseFloat(product.originalPrice) > parseFloat(product.price) && (
-                <span className="text-xs sm:text-sm text-gray-500 line-through">
-                  ₹{parseFloat(product.originalPrice || 0).toFixed(2)}
-                </span>
-              )}
+              {product.originalPrice &&
+                parseFloat(product.originalPrice) >
+                  parseFloat(product.price) && (
+                  <span className="text-xs sm:text-sm text-gray-500 line-through">
+                    ₹{parseFloat(product.originalPrice || 0).toFixed(2)}
+                  </span>
+                )}
             </div>
           </div>
 
@@ -199,23 +210,21 @@ function ProductCard({ product }) {
           <button
             onClick={handleAddToCart}
             disabled={isAdding || product.stock === 0}
-            className={`w-full inline-flex items-center justify-center px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-all duration-200 ${product.stock === 0
-              ? 'bg-gray-100 text-gray-400 cursor-not-allowed border border-gray-200'
-              : isAdding
-                ? 'bg-green-500 text-white cursor-not-allowed'
-                : 'bg-green-600 text-white hover:bg-green-700 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 active:bg-green-800'
-              }`}
+            className={`w-full inline-flex items-center justify-center px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-all duration-200 ${
+              product.stock === 0
+                ? "bg-gray-100 text-gray-400 cursor-not-allowed border border-gray-200"
+                : isAdding
+                  ? "bg-green-500 text-white cursor-not-allowed"
+                  : "bg-green-600 text-white hover:bg-green-700 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 active:bg-green-800"
+            }`}
           >
             <ShoppingCart className="h-4 w-4 mr-1.5" />
             {product.stock === 0
-              ? 'Out of Stock'
+              ? "Out of Stock"
               : isAdding
-                ? 'Adding...'
-                : 'Add to Cart'
-            }
+                ? "Adding..."
+                : "Add to Cart"}
           </button>
-
-
         </div>
       </div>
     </div>

@@ -24,7 +24,7 @@ function AdminPanel() {
         }
 
         // Fetch user profile to check role
-        const userRes = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/auth/profile`, {
+        const userRes = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/auth/profile`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 

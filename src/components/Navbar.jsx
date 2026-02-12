@@ -1,16 +1,28 @@
-import { useState, useEffect, useRef, useContext } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { ShoppingCart, User, LogOut, Search, ChevronDown, ShoppingBag, Menu, X, Settings, ChevronRight, Languages } from 'lucide-react';
-import axios from 'axios';
+import { useState, useEffect, useRef, useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import {
+  ShoppingCart,
+  User,
+  LogOut,
+  Search,
+  ChevronDown,
+  ShoppingBag,
+  Menu,
+  X,
+  Settings,
+  ChevronRight,
+  Languages,
+} from "lucide-react";
+import axios from "axios";
 // Import the logo image
-import logo from '../assets/images/hindavi_nursery.png';
-import { CartCountContext } from '../context/cartCount';
-import { API_BASE_URL } from '../config/api';
+import logo from "../assets/images/hindavi_nursery.png";
+import { CartCountContext } from "../context/cartCount";
 
 function Navbar() {
   const navigate = useNavigate();
-  const isLoggedIn = !!localStorage.getItem('token');
-  const [isCategoriesDropdownOpen, setIsCategoriesDropdownOpen] = useState(false);
+  const isLoggedIn = !!localStorage.getItem("token");
+  const [isCategoriesDropdownOpen, setIsCategoriesDropdownOpen] =
+    useState(false);
   const [isPlantsDropdownOpen, setIsPlantsDropdownOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [cartItemsCount, setCartItemsCount] = useState(0);
@@ -22,11 +34,11 @@ function Navbar() {
   const [mobileIndoorOpen, setMobileIndoorOpen] = useState(false);
   const [mobileOutdoorOpen, setMobileOutdoorOpen] = useState(false);
   const [categories, setCategories] = useState([]);
-  const [plantsCategoryId, setPlantsCategoryId] = useState('');
+  const [plantsCategoryId, setPlantsCategoryId] = useState("");
   const [isTranslateOpen, setIsTranslateOpen] = useState(false);
-  const [currentLanguage, setCurrentLanguage] = useState('en');
+  const [currentLanguage, setCurrentLanguage] = useState("en");
   const googleTranslateInitialized = useRef(false);
-  const { setCartCount, cartCount } = useContext(CartCountContext)
+  const { setCartCount, cartCount } = useContext(CartCountContext);
 
   // Refs for dropdown menus
   const userMenuRef = useRef(null);
@@ -37,18 +49,19 @@ function Navbar() {
 
   // Add Marathi to your language options
   const languages = [
-    { code: 'en', name: 'English', nativeName: 'English' },
-    { code: 'hi', name: 'Hindi', nativeName: 'हिन्दी' },
-    { code: 'mr', name: 'Marathi', nativeName: 'मराठी' }
+    { code: "en", name: "English", nativeName: "English" },
+    { code: "hi", name: "Hindi", nativeName: "हिन्दी" },
+    { code: "mr", name: "Marathi", nativeName: "मराठी" },
   ];
 
   // UI translations for the language selector button
   const translations = {
     en: { translate: "Translate" },
     hi: { translate: "अनुवाद करें" },
-    mr: { translate: "भाषांतर" }
+    mr: { translate: "भाषांतर" },
   };
-  const getText = (key) => translations[currentLanguage]?.[key] || translations.en[key];
+  const getText = (key) =>
+    translations[currentLanguage]?.[key] || translations.en[key];
 
   // Close user dropdown when clicking outside
   useEffect(() => {
@@ -108,27 +121,27 @@ function Navbar() {
     const plantsDropdown = plantsDropdownRef.current;
 
     if (categoryMenu) {
-      categoryMenu.addEventListener('mouseenter', handleCategoryMouseEnter);
-      categoryMenu.addEventListener('mouseleave', handleCategoryMouseLeave);
+      categoryMenu.addEventListener("mouseenter", handleCategoryMouseEnter);
+      categoryMenu.addEventListener("mouseleave", handleCategoryMouseLeave);
     }
 
     if (categoryDropdown) {
-      categoryDropdown.addEventListener('mouseenter', () => {
+      categoryDropdown.addEventListener("mouseenter", () => {
         if (categoryTimeoutId) clearTimeout(categoryTimeoutId);
       });
-      categoryDropdown.addEventListener('mouseleave', handleCategoryMouseLeave);
+      categoryDropdown.addEventListener("mouseleave", handleCategoryMouseLeave);
     }
 
     if (plantsMenu) {
-      plantsMenu.addEventListener('mouseenter', handlePlantsMouseEnter);
-      plantsMenu.addEventListener('mouseleave', handlePlantsMouseLeave);
+      plantsMenu.addEventListener("mouseenter", handlePlantsMouseEnter);
+      plantsMenu.addEventListener("mouseleave", handlePlantsMouseLeave);
     }
 
     if (plantsDropdown) {
-      plantsDropdown.addEventListener('mouseenter', () => {
+      plantsDropdown.addEventListener("mouseenter", () => {
         if (plantsTimeoutId) clearTimeout(plantsTimeoutId);
       });
-      plantsDropdown.addEventListener('mouseleave', handlePlantsMouseLeave);
+      plantsDropdown.addEventListener("mouseleave", handlePlantsMouseLeave);
     }
 
     return () => {
@@ -136,27 +149,39 @@ function Navbar() {
       if (plantsTimeoutId) clearTimeout(plantsTimeoutId);
 
       if (categoryMenu) {
-        categoryMenu.removeEventListener('mouseenter', handleCategoryMouseEnter);
-        categoryMenu.removeEventListener('mouseleave', handleCategoryMouseLeave);
+        categoryMenu.removeEventListener(
+          "mouseenter",
+          handleCategoryMouseEnter,
+        );
+        categoryMenu.removeEventListener(
+          "mouseleave",
+          handleCategoryMouseLeave,
+        );
       }
 
       if (categoryDropdown) {
-        categoryDropdown.removeEventListener('mouseenter', () => {
+        categoryDropdown.removeEventListener("mouseenter", () => {
           if (categoryTimeoutId) clearTimeout(categoryTimeoutId);
         });
-        categoryDropdown.removeEventListener('mouseleave', handleCategoryMouseLeave);
+        categoryDropdown.removeEventListener(
+          "mouseleave",
+          handleCategoryMouseLeave,
+        );
       }
 
       if (plantsMenu) {
-        plantsMenu.removeEventListener('mouseenter', handlePlantsMouseEnter);
-        plantsMenu.removeEventListener('mouseleave', handlePlantsMouseLeave);
+        plantsMenu.removeEventListener("mouseenter", handlePlantsMouseEnter);
+        plantsMenu.removeEventListener("mouseleave", handlePlantsMouseLeave);
       }
 
       if (plantsDropdown) {
-        plantsDropdown.removeEventListener('mouseenter', () => {
+        plantsDropdown.removeEventListener("mouseenter", () => {
           if (plantsTimeoutId) clearTimeout(plantsTimeoutId);
         });
-        plantsDropdown.removeEventListener('mouseleave', handlePlantsMouseLeave);
+        plantsDropdown.removeEventListener(
+          "mouseleave",
+          handlePlantsMouseLeave,
+        );
       }
     };
   }, [isCategoriesDropdownOpen, isPlantsDropdownOpen]);
@@ -178,22 +203,23 @@ function Navbar() {
   // Fetch categories - Updated to use hardcoded backend URL
   const fetchCategories = async () => {
     try {
-      console.log('Fetching categories from:', `${API_BASE_URL}/api/categories`);
-
-      const response = await axios.get(`${API_BASE_URL}/api/categories`);
+      const response = await axios.get(
+        `${import.meta.env.VITE_BACKEND_URL}/categories`,
+      );
       setCategories(response.data || []);
 
       // Find the Plants category ID to use with the Plants dropdown
-      const plantsCategory = response.data.find(cat =>
-        cat.name.toLowerCase() === 'plants' ||
-        cat.name.toLowerCase() === 'plant'
+      const plantsCategory = response.data.find(
+        (cat) =>
+          cat.name.toLowerCase() === "plants" ||
+          cat.name.toLowerCase() === "plant",
       );
 
       if (plantsCategory) {
         setPlantsCategoryId(plantsCategory._id);
       }
     } catch (error) {
-      console.error('Error fetching categories:', error);
+      console.error("Error fetching categories:", error);
       setCategories([]); // Set empty array on error to prevent undefined
     }
   };
@@ -201,13 +227,13 @@ function Navbar() {
   // Prevent body scroll when mobile menu is open
   useEffect(() => {
     if (mobileMenuOpen) {
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = 'auto';
+      document.body.style.overflow = "auto";
     }
 
     return () => {
-      document.body.style.overflow = 'auto';
+      document.body.style.overflow = "auto";
     };
   }, [mobileMenuOpen]);
 
@@ -215,24 +241,26 @@ function Navbar() {
   const fetchCartData = async () => {
     try {
       setLoading(true);
-      const token = localStorage.getItem('token');
-      const response = await axios.get(`${API_BASE_URL}/api/cart`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      console.log({ response });
-
+      const token = localStorage.getItem("token");
+      const response = await axios.get(
+        `${import.meta.env.VITE_BACKEND_URL}/cart`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
       // Calculate total items in cart
-      const itemsCount = response?.data?.cart?.items?.reduce(
-        (total, item) => total + item.quantity,
-        0
-      ) || 0;
+      const itemsCount =
+        response?.data?.cart?.items?.reduce(
+          (total, item) => total + item.quantity,
+          0,
+        ) || 0;
 
       setCartItemsCount(itemsCount);
       setCartCount(itemsCount);
     } catch (error) {
-      console.error('Error fetching cart:', error);
+      console.error("Error fetching cart:", error);
       setCartItemsCount(0); // Set to 0 on error
-      setCartCount(0)
+      setCartCount(0);
     } finally {
       setLoading(false);
     }
@@ -241,15 +269,21 @@ function Navbar() {
   // Fetch user profile data
   const fetchUserData = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await axios.get(`${API_BASE_URL}/api/auth/profile`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const token = localStorage.getItem("token");
+      const response = await axios.get(
+        `${import.meta.env.VITE_BACKEND_URL}/auth/profile`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
       setUserData(response.data);
     } catch (error) {
-      console.error('Error fetching user data:', error);
+      console.error("Error fetching user data:", error);
       // Handle token expiration or invalid token
-      if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+      if (
+        error.response &&
+        (error.response.status === 401 || error.response.status === 403)
+      ) {
         handleLogout();
       }
     }
@@ -257,12 +291,12 @@ function Navbar() {
 
   // Handle logout
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('role');
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
     setIsLoggedIn(false);
     setUserData(null);
     setMobileMenuOpen(false);
-    navigate('/login');
+    navigate("/login");
   };
 
   // Close mobile menu
@@ -272,35 +306,42 @@ function Navbar() {
 
   useEffect(() => {
     // Load saved language preference
-    const savedLanguage = localStorage.getItem('preferredLanguage') || 'en';
+    const savedLanguage = localStorage.getItem("preferredLanguage") || "en";
     setCurrentLanguage(savedLanguage);
 
     // Load Google Translate script
     const loadGoogleTranslate = () => {
       if (!googleTranslateInitialized.current) {
-        const translateElement = document.getElementById('google_translate_element_hidden');
+        const translateElement = document.getElementById(
+          "google_translate_element_hidden",
+        );
         if (!translateElement) {
-          const div = document.createElement('div');
-          div.id = 'google_translate_element_hidden';
-          div.style.display = 'none';
+          const div = document.createElement("div");
+          div.id = "google_translate_element_hidden";
+          div.style.display = "none";
           document.body.appendChild(div);
         }
         window.googleTranslateElementInit = function () {
-          new window.google.translate.TranslateElement({
-            pageLanguage: 'en',
-            includedLanguages: 'en,hi,mr',
-            autoDisplay: false,
-            layout: window.google.translate.TranslateElement.InlineLayout.SIMPLE
-          }, 'google_translate_element_hidden');
+          new window.google.translate.TranslateElement(
+            {
+              pageLanguage: "en",
+              includedLanguages: "en,hi,mr",
+              autoDisplay: false,
+              layout:
+                window.google.translate.TranslateElement.InlineLayout.SIMPLE,
+            },
+            "google_translate_element_hidden",
+          );
           googleTranslateInitialized.current = true;
           setTimeout(() => {
-            if (savedLanguage && savedLanguage !== 'en') {
+            if (savedLanguage && savedLanguage !== "en") {
               applyTranslation(savedLanguage);
             }
           }, 1000);
         };
-        const script = document.createElement('script');
-        script.src = '//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+        const script = document.createElement("script");
+        script.src =
+          "//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit";
         script.async = true;
         document.head.appendChild(script);
       }
@@ -312,24 +353,24 @@ function Navbar() {
 
   const applyTranslation = (languageCode) => {
     try {
-      const selectElement = document.querySelector('.goog-te-combo');
+      const selectElement = document.querySelector(".goog-te-combo");
       if (selectElement) {
         selectElement.value = languageCode;
-        const event = new Event('change', { bubbles: true });
+        const event = new Event("change", { bubbles: true });
         selectElement.dispatchEvent(event);
       } else {
         document.cookie = `googtrans=/en/${languageCode}; path=/; domain=${window.location.hostname}`;
-        if (window.location.hostname === 'localhost') {
+        if (window.location.hostname === "localhost") {
           document.cookie = `googtrans=/en/${languageCode}; path=/`;
         }
       }
     } catch (error) {
-      console.error('Translation error:', error);
+      console.error("Translation error:", error);
     }
   };
 
   const changeLanguage = (languageCode) => {
-    localStorage.setItem('preferredLanguage', languageCode);
+    localStorage.setItem("preferredLanguage", languageCode);
     setCurrentLanguage(languageCode);
     setIsTranslateOpen(false);
     applyTranslation(languageCode);
@@ -357,17 +398,16 @@ function Navbar() {
           <nav className="hidden md:flex items-center space-x-4">
             {/* Plants Dropdown with Indoor/Outdoor subcategories */}
 
-            <Link
-              to="/"
-              className="ml-4"
-            >
+            <Link to="/" className="ml-4">
               Home
             </Link>
             <div className="relative" ref={plantsMenuRef}>
-
-
               <Link
-                to={plantsCategoryId ? `/products?category=${plantsCategoryId}` : "/products"}
+                to={
+                  plantsCategoryId
+                    ? `/products?category=${plantsCategoryId}`
+                    : "/products"
+                }
                 className="flex items-center hover:text-green-600 transition-colors py-2"
               >
                 Plants <ChevronDown className="h-4 w-4 ml-1" />
@@ -379,7 +419,9 @@ function Navbar() {
                   className="absolute left-0 mt-0 w-64 bg-white shadow-lg rounded-md py-2 z-20 border border-gray-100"
                 >
                   <div className="px-4 pt-1 pb-2 mb-1 border-b border-gray-100">
-                    <span className="text-sm font-medium text-gray-800">Plant Categories</span>
+                    <span className="text-sm font-medium text-gray-800">
+                      Plant Categories
+                    </span>
                   </div>
 
                   {/* Indoor Plants Section */}
@@ -456,7 +498,11 @@ function Navbar() {
 
                   <div className="px-4 pt-2 mt-1 border-t border-gray-100">
                     <Link
-                      to={plantsCategoryId ? `/products?category=${plantsCategoryId}` : "/products"}
+                      to={
+                        plantsCategoryId
+                          ? `/products?category=${plantsCategoryId}`
+                          : "/products"
+                      }
                       className="block py-2 text-green-600 hover:text-green-700 font-medium text-sm"
                     >
                       Browse All Plants →
@@ -481,44 +527,69 @@ function Navbar() {
                   className="absolute left-0 mt-0 w-56 bg-white shadow-lg rounded-md py-2 z-20 border border-gray-100"
                 >
                   {categories.length > 0 ? (
-                    categories.map(category => (
+                    categories.map((category) => (
                       <Link
-                        key={category._id}
-                        to={`/products?category=${category._id}`}
+                        key={category.id}
+                        to={`/products?category=${category.id}`}
                         className="block px-4 py-2 hover:bg-green-50 transition-colors"
                       >
                         {category.name}
                       </Link>
                     ))
                   ) : (
-                    <div className="px-4 py-2 text-gray-500 italic text-sm">Loading categories...</div>
+                    <div className="px-4 py-2 text-gray-500 italic text-sm">
+                      Loading categories...
+                    </div>
                   )}
                 </div>
               )}
             </div>
 
             {/* Pots Link */}
-            <Link to="/products?type=pot" className="hover:text-green-600 transition-colors py-2">Pots</Link>
+            <Link
+              to="/products?type=pot"
+              className="hover:text-green-600 transition-colors py-2"
+            >
+              Pots
+            </Link>
 
             {/* Landscape Link */}
-            <Link to="/landscape" className="hover:text-green-600 transition-colors py-2">Landscaping</Link>
+            <Link
+              to="/landscape"
+              className="hover:text-green-600 transition-colors py-2"
+            >
+              Landscaping
+            </Link>
 
             {/* Tools Link */}
-            <Link to="/products?type=tool" className="hover:text-green-600 transition-colors py-2">Tools</Link>
+            <Link
+              to="/products?type=tool"
+              className="hover:text-green-600 transition-colors py-2"
+            >
+              Tools
+            </Link>
 
             {/* About Us Link */}
-            <Link to="/about" className="hover:text-green-600 transition-colors py-2">About Us</Link>
+            <Link
+              to="/about"
+              className="hover:text-green-600 transition-colors py-2"
+            >
+              About Us
+            </Link>
           </nav>
 
           {/* Right Icons */}
           <div className="flex items-center">
             {/* Desktop Navigation Icons */}
             <div className="hidden md:flex items-center space-x-6">
-              { /*<Link to="/search" className="hover:text-green-600">
+              {/*<Link to="/search" className="hover:text-green-600">
                 <Search className="h-5 w-5" />
               </Link> */}
 
-              <Link to="/cart" className="hover:text-green-600 flex items-center relative">
+              <Link
+                to="/cart"
+                className="hover:text-green-600 flex items-center relative"
+              >
                 <ShoppingCart className="h-5 w-5" />
                 {cartCount > 0 && (
                   <span className="absolute -top-2 -right-2 bg-green-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
@@ -532,11 +603,15 @@ function Navbar() {
                 <button
                   onClick={toggleTranslate}
                   className="flex items-center space-x-1 px-3 py-1.5 rounded-full hover:bg-green-50 transition-colors duration-300 text-sm font-medium"
-                  title={getText('translate')}
+                  title={getText("translate")}
                 >
                   <Languages className="w-5 h-5" />
                   <span>
-                    {currentLanguage === 'en' ? 'EN' : currentLanguage === 'hi' ? 'हिं' : 'मरा'}
+                    {currentLanguage === "en"
+                      ? "EN"
+                      : currentLanguage === "hi"
+                        ? "हिं"
+                        : "मरा"}
                   </span>
                 </button>
                 {isTranslateOpen && (
@@ -544,21 +619,24 @@ function Navbar() {
                     <div className="p-3">
                       <div className="font-medium mb-2 flex items-center">
                         <Languages className="w-4 h-4 mr-2" />
-                        {getText('translate')}
+                        {getText("translate")}
                       </div>
                       <div className="space-y-1">
                         {languages.map((lang) => (
                           <button
                             key={lang.code}
                             onClick={() => changeLanguage(lang.code)}
-                            className={`w-full text-left px-3 py-2 rounded-lg flex items-center justify-between ${currentLanguage === lang.code
-                              ? 'bg-green-100 text-green-700 font-medium'
-                              : 'hover:bg-green-50'
-                              }`}
+                            className={`w-full text-left px-3 py-2 rounded-lg flex items-center justify-between ${
+                              currentLanguage === lang.code
+                                ? "bg-green-100 text-green-700 font-medium"
+                                : "hover:bg-green-50"
+                            }`}
                           >
                             <div>
                               <div className="font-medium">{lang.name}</div>
-                              <div className="text-xs opacity-75">{lang.nativeName}</div>
+                              <div className="text-xs opacity-75">
+                                {lang.nativeName}
+                              </div>
                             </div>
                             {currentLanguage === lang.code && (
                               <div className="w-2 h-2 bg-green-700 rounded-full"></div>
@@ -593,25 +671,38 @@ function Navbar() {
                     <div className="absolute right-0 mt-2 w-64 bg-white shadow-lg rounded-md py-2 z-50 border border-gray-100">
                       {userData && (
                         <div className="px-4 py-3 border-b border-gray-100">
-                          <p className="font-medium text-gray-800">{userData.name}</p>
-                          <p className="text-xs text-gray-500">{userData.email}</p>
-                          {userData.role === 'admin' && (
+                          <p className="font-medium text-gray-800">
+                            {userData.name}
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            {userData.email}
+                          </p>
+                          {userData.role === "admin" && (
                             <span className="inline-block mt-1 px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full">
                               Admin
                             </span>
                           )}
                         </div>
                       )}
-                      <Link to="/profile" className="flex items-center gap-2 px-4 py-2 hover:bg-green-50">
+                      <Link
+                        to="/profile"
+                        className="flex items-center gap-2 px-4 py-2 hover:bg-green-50"
+                      >
                         <User className="h-4 w-4" />
                         <span>My Profile</span>
                       </Link>
-                      <Link to="/orders" className="flex items-center gap-2 px-4 py-2 hover:bg-green-50">
+                      <Link
+                        to="/orders"
+                        className="flex items-center gap-2 px-4 py-2 hover:bg-green-50"
+                      >
                         <ShoppingBag className="h-4 w-4" />
                         <span>My Orders</span>
                       </Link>
-                      {userData?.role !== 'user' && (
-                        <Link to="/admin" className="flex items-center gap-2 px-4 py-2 hover:bg-blue-50 text-blue-600">
+                      {userData?.role !== "user" && (
+                        <Link
+                          to="/admin"
+                          className="flex items-center gap-2 px-4 py-2 hover:bg-blue-50 text-blue-600"
+                        >
                           <Settings className="h-4 w-4" />
                           <span>Admin Dashboard</span>
                         </Link>
@@ -627,7 +718,9 @@ function Navbar() {
                   )}
                 </div>
               ) : (
-                <Link to="/login" className="hover:text-green-600 font-medium">Login</Link>
+                <Link to="/login" className="hover:text-green-600 font-medium">
+                  Login
+                </Link>
               )}
             </div>
 
@@ -637,7 +730,10 @@ function Navbar() {
                 <Search className="h-5 w-5" />
               </Link> */}
 
-              <Link to="/cart" className="hover:text-green-600 flex items-center relative p-1">
+              <Link
+                to="/cart"
+                className="hover:text-green-600 flex items-center relative p-1"
+              >
                 <ShoppingCart className="h-5 w-5" />
                 {cartCount > 0 && (
                   <span className="absolute -top-2 -right-2 bg-green-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
@@ -651,7 +747,7 @@ function Navbar() {
                 <button
                   onClick={toggleTranslate}
                   className="p-1 hover:bg-gray-100 rounded-md"
-                  title={getText('translate')}
+                  title={getText("translate")}
                 >
                   <Languages className="h-5 w-5" />
                 </button>
@@ -660,21 +756,24 @@ function Navbar() {
                     <div className="p-3">
                       <div className="font-medium mb-2 flex items-center">
                         <Languages className="w-4 h-4 mr-2" />
-                        {getText('translate')}
+                        {getText("translate")}
                       </div>
                       <div className="space-y-1">
                         {languages.map((lang) => (
                           <button
                             key={lang.code}
                             onClick={() => changeLanguage(lang.code)}
-                            className={`w-full text-left px-3 py-2 rounded-lg flex items-center justify-between ${currentLanguage === lang.code
-                              ? 'bg-green-100 text-green-700 font-medium'
-                              : 'hover:bg-green-50'
-                              }`}
+                            className={`w-full text-left px-3 py-2 rounded-lg flex items-center justify-between ${
+                              currentLanguage === lang.code
+                                ? "bg-green-100 text-green-700 font-medium"
+                                : "hover:bg-green-50"
+                            }`}
                           >
                             <div>
                               <div className="font-medium">{lang.name}</div>
-                              <div className="text-xs opacity-75">{lang.nativeName}</div>
+                              <div className="text-xs opacity-75">
+                                {lang.nativeName}
+                              </div>
                             </div>
                             {currentLanguage === lang.code && (
                               <div className="w-2 h-2 bg-green-700 rounded-full"></div>
@@ -694,7 +793,11 @@ function Navbar() {
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 className="p-1 hover:bg-gray-100 rounded-md"
               >
-                {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+                {mobileMenuOpen ? (
+                  <X className="h-6 w-6" />
+                ) : (
+                  <Menu className="h-6 w-6" />
+                )}
               </button>
             </div>
           </div>
@@ -727,7 +830,7 @@ function Navbar() {
                     <div className="flex-1">
                       <p className="font-medium">{userData.name}</p>
                       <p className="text-xs text-gray-600">{userData.email}</p>
-                      {userData.role === 'admin' && (
+                      {userData.role === "admin" && (
                         <span className="inline-block mt-1 px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full">
                           Admin
                         </span>
@@ -754,7 +857,9 @@ function Navbar() {
                     className="flex items-center justify-between w-full px-3 py-2 rounded-md hover:bg-green-50 hover:text-green-600"
                   >
                     <span>Plants</span>
-                    <ChevronDown className={`h-4 w-4 transition-transform ${mobilePlantsOpen ? 'rotate-180' : ''}`} />
+                    <ChevronDown
+                      className={`h-4 w-4 transition-transform ${mobilePlantsOpen ? "rotate-180" : ""}`}
+                    />
                   </button>
 
                   {mobilePlantsOpen && (
@@ -766,7 +871,9 @@ function Navbar() {
                           className="flex items-center justify-between w-full px-3 py-2 rounded-md hover:bg-green-50 text-sm"
                         >
                           <span>Indoor Plants</span>
-                          <ChevronRight className={`h-4 w-4 transition-transform ${mobileIndoorOpen ? 'rotate-90' : ''}`} />
+                          <ChevronRight
+                            className={`h-4 w-4 transition-transform ${mobileIndoorOpen ? "rotate-90" : ""}`}
+                          />
                         </button>
 
                         {mobileIndoorOpen && (
@@ -806,11 +913,15 @@ function Navbar() {
                       {/* Outdoor Plants Collapsible */}
                       <div>
                         <button
-                          onClick={() => setMobileOutdoorOpen(!mobileOutdoorOpen)}
+                          onClick={() =>
+                            setMobileOutdoorOpen(!mobileOutdoorOpen)
+                          }
                           className="flex items-center justify-between w-full px-3 py-2 rounded-md hover:bg-green-50 text-sm"
                         >
                           <span>Outdoor Plants</span>
-                          <ChevronRight className={`h-4 w-4 transition-transform ${mobileOutdoorOpen ? 'rotate-90' : ''}`} />
+                          <ChevronRight
+                            className={`h-4 w-4 transition-transform ${mobileOutdoorOpen ? "rotate-90" : ""}`}
+                          />
                         </button>
 
                         {mobileOutdoorOpen && (
@@ -848,7 +959,11 @@ function Navbar() {
                       </div>
 
                       <Link
-                        to={plantsCategoryId ? `/products?category=${plantsCategoryId}` : "/products"}
+                        to={
+                          plantsCategoryId
+                            ? `/products?category=${plantsCategoryId}`
+                            : "/products"
+                        }
                         className="block px-3 py-2 rounded-md hover:bg-green-50 text-sm text-green-600"
                         onClick={closeMobileMenu}
                       >
@@ -861,17 +976,21 @@ function Navbar() {
                 {/* Dynamic Categories Dropdown for Mobile */}
                 <div>
                   <button
-                    onClick={() => setMobileCategoriesOpen(!mobileCategoriesOpen)}
+                    onClick={() =>
+                      setMobileCategoriesOpen(!mobileCategoriesOpen)
+                    }
                     className="flex items-center justify-between w-full px-3 py-2 rounded-md hover:bg-green-50 hover:text-green-600"
                   >
                     <span>Categories</span>
-                    <ChevronDown className={`h-4 w-4 transition-transform ${mobileCategoriesOpen ? 'rotate-180' : ''}`} />
+                    <ChevronDown
+                      className={`h-4 w-4 transition-transform ${mobileCategoriesOpen ? "rotate-180" : ""}`}
+                    />
                   </button>
 
                   {mobileCategoriesOpen && (
                     <div className="pl-4 space-y-1 mt-1">
                       {categories.length > 0 ? (
-                        categories.map(category => (
+                        categories.map((category) => (
                           <Link
                             key={category._id}
                             to={`/products?category=${category._id}`}
@@ -882,7 +1001,9 @@ function Navbar() {
                           </Link>
                         ))
                       ) : (
-                        <div className="px-3 py-2 text-gray-500 italic text-sm">Loading categories...</div>
+                        <div className="px-3 py-2 text-gray-500 italic text-sm">
+                          Loading categories...
+                        </div>
                       )}
                     </div>
                   )}
@@ -898,9 +1019,11 @@ function Navbar() {
                 </Link>
 
                 {/* Landscape Link */}
-                <Link to="/landscape"
+                <Link
+                  to="/landscape"
                   className="block px-3 py-2 rounded-md hover:bg-green-50 hover:text-green-600"
-                  onClick={closeMobileMenu}>
+                  onClick={closeMobileMenu}
+                >
                   Landscaping
                 </Link>
 
@@ -942,7 +1065,7 @@ function Navbar() {
                       <ShoppingBag className="h-4 w-4" />
                       <span>My Orders</span>
                     </Link>
-                    {userData?.role !== 'user' && (
+                    {userData?.role !== "user" && (
                       <Link
                         to="/admin"
                         className="flex items-center space-x-2 px-3 py-2 rounded-md hover:bg-blue-50 text-blue-600"
@@ -976,7 +1099,10 @@ function Navbar() {
       )}
 
       {/* Hidden Google Translate Element */}
-      <div id="google_translate_element_hidden" style={{ display: 'none' }}></div>
+      <div
+        id="google_translate_element_hidden"
+        style={{ display: "none" }}
+      ></div>
 
       {/* Click outside to close translate dropdown */}
       {isTranslateOpen && (

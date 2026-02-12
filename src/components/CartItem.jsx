@@ -1,56 +1,59 @@
-import { useContext, useState } from 'react';
-import { Trash2 } from 'lucide-react';
-import axios from 'axios';
-import { toast } from 'react-toastify';
-import { CartCountContext } from '../context/cartCount';
-import { API_BASE_URL } from '../config/api';
+import { useContext, useState } from "react";
+import { Trash2 } from "lucide-react";
+import axios from "axios";
+import { toast } from "react-toastify";
+import { CartCountContext } from "../context/cartCount";
 
 function CartItem({ item, onUpdate, onRemove }) {
   const [quantity, setQuantity] = useState(item.quantity);
-  const {setCartCount} = useContext(CartCountContext)
+  const { setCartCount } = useContext(CartCountContext);
 
   const handleUpdate = async (newQuantity) => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       await axios.put(
-        `${API_BASE_URL}/api/cart/update`,
+        `${import.meta.env.VITE_BACKEND_URL}/cart/update`,
         { productId: item.product.id, quantity: newQuantity },
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { Authorization: `Bearer ${token}` } },
       );
       setQuantity(newQuantity);
       onUpdate();
-      toast.success('Cart updated');
+      toast.success("Cart updated");
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Failed to update cart');
+      toast.error(error.response?.data?.message || "Failed to update cart");
     }
   };
 
   const handleRemove = async () => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       await axios.delete(
-        `${API_BASE_URL}/api/cart/remove/${item.product.id}`,
-        { headers: { Authorization: `Bearer ${token}` } }
+        `${import.meta.env.VITE_BACKEND_URL}/cart/remove/${item.product.id}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
       );
       onRemove();
-      setCartCount((prev)=> prev - 1);
-      toast.success('Item removed from cart');
+      setCartCount((prev) => prev - 1);
+      toast.success("Item removed from cart");
     } catch (error) {
-      console.log({ error })
-      toast.error(error.response?.data?.message || 'Failed to remove item');
+      console.log({ error });
+      toast.error(error.response?.data?.message || "Failed to remove item");
     }
   };
 
   return (
     <div className="flex items-center border-b py-4">
       <img
-        src={item.product?.imageUrls[0] || 'https://via.placeholder.com/100'}
+        src={item.product?.imageUrls[0] || "https://via.placeholder.com/100"}
         alt={item.product?.name}
         className="w-24 h-24 object-cover rounded"
       />
       <div className="flex-1 ml-4">
         <h3 className="text-lg font-semibold">{item.product?.name}</h3>
-        <p className="text-gray-600">₹{parseFloat(item.product.price || 0).toFixed(2)}</p>
+        <p className="text-gray-600">
+          ₹{parseFloat(item.product.price || 0).toFixed(2)}
+        </p>
         <div className="flex items-center mt-2">
           <button
             onClick={() => handleUpdate(quantity - 1)}
@@ -68,7 +71,10 @@ function CartItem({ item, onUpdate, onRemove }) {
           </button>
         </div>
       </div>
-      <button onClick={handleRemove} className="text-red-500 hover:text-red-700">
+      <button
+        onClick={handleRemove}
+        className="text-red-500 hover:text-red-700"
+      >
         <Trash2 className="h-5 w-5" />
       </button>
     </div>

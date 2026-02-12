@@ -1,24 +1,28 @@
-import { useState, useEffect } from 'react';
-import axios from 'axios';
-import ProductCard from './ProductCard';
-import LoadingSpinner from './common/LoadingSpinner';
-import { Search, Filter, Leaf, AlertCircle } from 'lucide-react';
-import { API_BASE_URL, debugAPI } from '../config/api';
+import { useState, useEffect } from "react";
+import axios from "axios";
+import ProductCard from "./ProductCard";
+import LoadingSpinner from "./common/LoadingSpinner";
+import { Search, Filter, Leaf, AlertCircle } from "lucide-react";
 
-function ProductList({ searchQuery, sortBy: initialSortBy, viewMode, categoryParam }) {
+function ProductList({
+  searchQuery,
+  sortBy: initialSortBy,
+  viewMode,
+  categoryParam,
+}) {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState('');
-  const [localSearch, setLocalSearch] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [localSearch, setLocalSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [favorites, setFavorites] = useState([]);
-  const [priceRange, setPriceRange] = useState('');
-  const [sortBy, setSortBy] = useState(initialSortBy || 'price-low'); // Default to price low to high
+  const [priceRange, setPriceRange] = useState("");
+  const [sortBy, setSortBy] = useState(initialSortBy || "price-low"); // Default to price low to high
 
   // Use searchQuery from props if provided, otherwise use local search
   const effectiveSearch = searchQuery || localSearch;
-  
+
   // Set the selected category based on the categoryParam prop if provided
   useEffect(() => {
     if (categoryParam) {
@@ -38,50 +42,47 @@ function ProductList({ searchQuery, sortBy: initialSortBy, viewMode, categoryPar
       try {
         setLoading(true);
         setError(null);
-        
-        // Debug: Call debug function
-        debugAPI();
-        
+
         const [productsRes, categoriesRes] = await Promise.all([
-          axios.get(`${API_BASE_URL}/products`, {
-            params: { 
-              category: selectedCategory, 
+          axios.get(`${import.meta.env.VITE_BACKEND_URL}/products`, {
+            params: {
+              category: selectedCategory,
               search: effectiveSearch,
-              priceRange
+              priceRange,
             },
           }),
-          axios.get(`${API_BASE_URL}/categories`),
+          axios.get(`${import.meta.env.VITE_BACKEND_URL}/categories`),
         ]);
-        
+
         let fetchedProducts = productsRes.data.products || [];
-        
+
         // Sort products based on sortBy state
         fetchedProducts = sortProducts(fetchedProducts, sortBy);
-        console.log([productsRes, categoriesRes] )
         setProducts(fetchedProducts);
-        console.log({categoriesRes})
-        setCategories(Array.isArray(categoriesRes?.data) ? categoriesRes?.data : []);
+        setCategories(
+          Array.isArray(categoriesRes?.data) ? categoriesRes?.data : [],
+        );
       } catch (error) {
-        console.error('Error fetching data:', error);
-        setError('Failed to load plants. Please try again.');
+        console.error("Error fetching data:", error);
+        setError("Failed to load plants. Please try again.");
       } finally {
         setLoading(false);
       }
     };
-    
+
     fetchData();
   }, [selectedCategory, effectiveSearch, sortBy, priceRange]);
 
   const sortProducts = (products, sortType) => {
     const sortedProducts = [...products];
     switch (sortType) {
-      case 'price-low':
+      case "price-low":
         return sortedProducts.sort((a, b) => a.price - b.price);
-      case 'price-high':
+      case "price-high":
         return sortedProducts.sort((a, b) => b.price - a.price);
-      case 'popularity':
+      case "popularity":
         return sortedProducts.sort((a, b) => (b.rating || 0) - (a.rating || 0));
-      case 'name':
+      case "name":
         return sortedProducts.sort((a, b) => a.name.localeCompare(b.name));
       default:
         return sortedProducts;
@@ -89,13 +90,15 @@ function ProductList({ searchQuery, sortBy: initialSortBy, viewMode, categoryPar
   };
 
   const clearAllFilters = () => {
-    setSelectedCategory('');
-    setLocalSearch('');
-    setPriceRange('');
-    setSortBy('price-low'); // Reset to default sort order
+    setSelectedCategory("");
+    setLocalSearch("");
+    setPriceRange("");
+    setSortBy("price-low"); // Reset to default sort order
   };
 
-  const activeFiltersCount = [selectedCategory, priceRange].filter(Boolean).length;
+  const activeFiltersCount = [selectedCategory, priceRange].filter(
+    Boolean,
+  ).length;
 
   if (loading) {
     return (
@@ -106,7 +109,9 @@ function ProductList({ searchQuery, sortBy: initialSortBy, viewMode, categoryPar
             <Leaf className="w-6 h-6 text-green-500 animate-pulse" />
           </div>
         </div>
-        <p className="mt-4 text-green-600 font-medium">Growing your plant collection...</p>
+        <p className="mt-4 text-green-600 font-medium">
+          Growing your plant collection...
+        </p>
       </div>
     );
   }
@@ -117,9 +122,11 @@ function ProductList({ searchQuery, sortBy: initialSortBy, viewMode, categoryPar
         <div className="bg-red-100 rounded-full p-4 mb-4">
           <AlertCircle className="w-8 h-8 text-red-600" />
         </div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">Oops! Something went wrong</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-2">
+          Oops! Something went wrong
+        </h3>
         <p className="text-gray-600 mb-4">{error}</p>
-        <button 
+        <button
           onClick={() => window.location.reload()}
           className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors"
         >
@@ -147,7 +154,7 @@ function ProductList({ searchQuery, sortBy: initialSortBy, viewMode, categoryPar
                 />
               </div>
             </div>
-            
+
             <div className="flex flex-col gap-3">
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 {/* Sort Order Dropdown */}
@@ -161,7 +168,7 @@ function ProductList({ searchQuery, sortBy: initialSortBy, viewMode, categoryPar
                   <option value="popularity">Popularity</option>
                   <option value="name">Name</option>
                 </select>
-                
+
                 {/* Category Filter */}
                 <select
                   value={selectedCategory}
@@ -170,10 +177,12 @@ function ProductList({ searchQuery, sortBy: initialSortBy, viewMode, categoryPar
                 >
                   <option value="">All Categories</option>
                   {categories?.map((category) => (
-                    <option key={category.id} value={category.id}>{category.name}</option>
+                    <option key={category.id} value={category.id}>
+                      {category.name}
+                    </option>
                   ))}
                 </select>
-                
+
                 {/* Price Range Filter - Updated to ₹ */}
                 <select
                   value={priceRange}
@@ -190,11 +199,12 @@ function ProductList({ searchQuery, sortBy: initialSortBy, viewMode, categoryPar
               </div>
             </div>
           </div>
-          
+
           {activeFiltersCount > 0 && (
             <div className="flex items-center gap-2 mt-3">
               <span className="text-sm text-green-700 font-medium">
-                {activeFiltersCount} filter{activeFiltersCount > 1 ? 's' : ''} applied
+                {activeFiltersCount} filter{activeFiltersCount > 1 ? "s" : ""}{" "}
+                applied
               </span>
               <button
                 onClick={clearAllFilters}
@@ -212,11 +222,11 @@ function ProductList({ searchQuery, sortBy: initialSortBy, viewMode, categoryPar
         <div className="flex items-center gap-2">
           <Leaf className="w-5 h-5 text-green-600" />
           <span className="text-gray-700">
-            {products.length} plant{products.length !== 1 ? 's' : ''} found
+            {products.length} plant{products.length !== 1 ? "s" : ""} found
             {effectiveSearch && ` for "${effectiveSearch}"`}
           </span>
         </div>
-        
+
         {products.length > 0 && (
           <div className="flex gap-3">
             <div className="flex items-center gap-2 text-sm text-gray-600">
@@ -238,17 +248,24 @@ function ProductList({ searchQuery, sortBy: initialSortBy, viewMode, categoryPar
 
       {/* Products Grid/List */}
       {products.length > 0 ? (
-        <div className={`
-          ${viewMode === 'list' 
-            ? 'space-y-4' 
-            : 'grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-6'
+        <div
+          className={`
+          ${
+            viewMode === "list"
+              ? "space-y-4"
+              : "grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-6"
           }
-        `}>
+        `}
+        >
           {products?.map((product) => (
             <div key={product.id} className="group relative">
-              <div className={viewMode === 'list' ? 'transform hover:scale-[1.02]' : ''}>
-                <ProductCard 
-                  product={product} 
+              <div
+                className={
+                  viewMode === "list" ? "transform hover:scale-[1.02]" : ""
+                }
+              >
+                <ProductCard
+                  product={product}
                   viewMode={viewMode}
                   isFavorite={favorites.includes(product.id)}
                 />
@@ -261,12 +278,13 @@ function ProductList({ searchQuery, sortBy: initialSortBy, viewMode, categoryPar
           <div className="bg-green-100 rounded-full p-6 w-24 h-24 mx-auto mb-4 flex items-center justify-center">
             <Leaf className="w-10 h-10 text-green-600" />
           </div>
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">No plants found</h3>
+          <h3 className="text-xl font-semibold text-gray-900 mb-2">
+            No plants found
+          </h3>
           <p className="text-gray-600 mb-6">
-            {effectiveSearch 
+            {effectiveSearch
               ? `We couldn't find any plants matching "${effectiveSearch}"`
-              : "No plants match your current filters"
-            }
+              : "No plants match your current filters"}
           </p>
           <div className="space-y-2">
             <p className="text-sm text-gray-500">Try:</p>

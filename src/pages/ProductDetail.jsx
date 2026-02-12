@@ -1,11 +1,20 @@
-import { useState, useEffect, useContext } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { toast } from 'react-toastify';
-import { ShoppingCart, Heart, Minus, Plus, Check, TruckIcon, Shield, Star } from 'lucide-react';
-import LoadingSpinner from '../components/common/LoadingSpinner';
-import { CartCountContext } from '../context/cartCount';
-import ProductReviewSection from '../components/ProductReviewSection';
+import { useState, useEffect, useContext } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { toast } from "react-toastify";
+import {
+  ShoppingCart,
+  Heart,
+  Minus,
+  Plus,
+  Check,
+  TruckIcon,
+  Shield,
+  Star,
+} from "lucide-react";
+import LoadingSpinner from "../components/common/LoadingSpinner";
+import { CartCountContext } from "../context/cartCount";
+import ProductReviewSection from "../components/ProductReviewSection";
 
 function ProductDetail() {
   const { id } = useParams();
@@ -16,55 +25,58 @@ function ProductDetail() {
   const [quantity, setQuantity] = useState(1);
   const [addingToCart, setAddingToCart] = useState(false);
   const [addedToCart, setAddedToCart] = useState(false);
-  const { setCartCount } = useContext(CartCountContext)
+  const { setCartCount } = useContext(CartCountContext);
 
   useEffect(() => {
     const fetchProduct = async () => {
       // Check if id is valid before making API call
-      if (!id || id === 'undefined') {
-        toast.error('Invalid product ID');
-        navigate('/products');
+      if (!id || id === "undefined") {
+        toast.error("Invalid product ID");
+        navigate("/products");
         setLoading(false);
         return;
       }
 
       try {
-        const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/products/${id}`);
+        const res = await axios.get(
+          `${import.meta.env.VITE_BACKEND_URL}/products/${id}`,
+        );
         setProduct(res.data);
       } catch (error) {
-        const message = error.response?.data?.message || 'Failed to load product';
+        const message =
+          error.response?.data?.message || "Failed to load product";
         toast.error(message);
-        navigate('/products');
+        navigate("/products");
       } finally {
         setLoading(false);
       }
     };
-    
+
     fetchProduct();
   }, [id, navigate]);
 
   const handleAddToCart = async () => {
     try {
       setAddingToCart(true);
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       if (!token) {
-        toast.error('Please login to add items to cart');
-        navigate('/login');
+        toast.error("Please login to add items to cart");
+        navigate("/login");
         return;
       }
       await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/api/cart/add`,
+        `${import.meta.env.VITE_BACKEND_URL}/cart/add`,
         { productId: id, quantity: quantity },
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { Authorization: `Bearer ${token}` } },
       );
 
       setCartCount((prev) => prev + 1);
 
       setAddedToCart(true);
       setTimeout(() => setAddedToCart(false), 2000);
-      toast.success('Added to cart!');
+      toast.success("Added to cart!");
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Failed to add to cart');
+      toast.error(error.response?.data?.message || "Failed to add to cart");
     } finally {
       setAddingToCart(false);
     }
@@ -72,13 +84,13 @@ function ProductDetail() {
 
   const incrementQuantity = () => {
     if (product && quantity < product.stock) {
-      setQuantity(prev => prev + 1);
+      setQuantity((prev) => prev + 1);
     }
   };
 
   const decrementQuantity = () => {
     if (quantity > 1) {
-      setQuantity(prev => prev - 1);
+      setQuantity((prev) => prev - 1);
     }
   };
 
@@ -92,7 +104,10 @@ function ProductDetail() {
         <div className="md:w-1/2">
           <div className="bg-gray-50 rounded-xl p-6 flex items-center justify-center">
             <img
-              src={product.imageUrls[selectedImage] || 'https://via.placeholder.com/400'}
+              src={
+                product.imageUrls[selectedImage] ||
+                "https://via.placeholder.com/400"
+              }
               alt={product.name}
               className="w-full h-96 object-contain rounded-lg"
             />
@@ -104,7 +119,7 @@ function ProductDetail() {
                 src={url}
                 alt={`${product.name} ${index + 1}`}
                 className={`w-16 h-16 object-cover rounded-lg cursor-pointer border-2 
-                  ${selectedImage === index ? 'border-green-500 shadow-md' : 'border-transparent'}`}
+                  ${selectedImage === index ? "border-green-500 shadow-md" : "border-transparent"}`}
                 onClick={() => setSelectedImage(index)}
               />
             ))}
@@ -127,16 +142,18 @@ function ProductDetail() {
           <h1 className="text-3xl font-bold text-gray-800">{product.name}</h1>
           <p className="text-gray-600 mt-1">{product.category?.name}</p>
 
-
-
           <div className="mt-4">
-            <p className="text-3xl font-bold text-gray-900">₹{parseFloat(product.price || 0).toFixed(2)}</p>
+            <p className="text-3xl font-bold text-gray-900">
+              ₹{parseFloat(product.price || 0).toFixed(2)}
+            </p>
             <p className="text-sm text-gray-500">Price includes taxes</p>
           </div>
 
           <div className="mt-6">
             <h3 className="font-medium text-gray-900 mb-2">Description</h3>
-            <p className="text-gray-700">{product.description || 'No description available'}</p>
+            <p className="text-gray-700">
+              {product.description || "No description available"}
+            </p>
           </div>
 
           <div className="mt-6 space-y-4">
@@ -162,7 +179,9 @@ function ProductDetail() {
               >
                 <Minus size={16} />
               </button>
-              <span className="mx-4 w-10 text-center font-medium">{quantity}</span>
+              <span className="mx-4 w-10 text-center font-medium">
+                {quantity}
+              </span>
               <button
                 onClick={incrementQuantity}
                 disabled={product.stock <= quantity}
@@ -194,13 +213,17 @@ function ProductDetail() {
               ) : (
                 <>
                   <ShoppingCart className="h-5 w-5" />
-                  <span>{product.stock === 0 ? 'Out of Stock' : 'Add to Cart'}</span>
+                  <span>
+                    {product.stock === 0 ? "Out of Stock" : "Add to Cart"}
+                  </span>
                 </>
               )}
             </button>
 
-            <button className="w-12 h-12 flex items-center justify-center rounded-full 
-              border-2 border-gray-300 hover:border-red-400 hover:bg-red-50 transition duration-200">
+            <button
+              className="w-12 h-12 flex items-center justify-center rounded-full 
+              border-2 border-gray-300 hover:border-red-400 hover:bg-red-50 transition duration-200"
+            >
               <Heart className="h-5 w-5 text-gray-600 hover:text-red-500" />
             </button>
           </div>
