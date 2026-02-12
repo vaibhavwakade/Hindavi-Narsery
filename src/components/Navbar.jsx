@@ -36,6 +36,27 @@ function Navbar() {
   const categoryDropdownRef = useRef(null);
   const plantsDropdownRef = useRef(null);
 
+  useEffect(() => {
+    const fetchUser = async () => {
+      const token = localStorage.getItem('token');
+      if (token) {
+        try {
+          const res = await axios.get(`${API_BASE_URL}/api/auth/profile`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          setUserData(res.data.user);
+          setIsLoggedIn(true);
+        } catch (error) {
+          // Handle token expiration or invalid token
+          localStorage.removeItem('token');
+          setIsLoggedIn(false);
+          console.error("Failed to fetch user profile:", error);
+        }
+      }
+    };
+    fetchUser();
+  }, [token]);
+
   // Add Marathi to your language options
   const languages = [
     { code: 'en', name: 'English', nativeName: 'English' },
@@ -338,12 +359,12 @@ function Navbar() {
   };
 
   return (
-    <header className="bg-white text-gray-800 shadow-md sticky top-0 z-50">
-      <div className="container mx-auto px-4">
-        <div className="flex justify-between items-center h-16 lg:h-20">
-          {/* Updated Logo */}
-          <div className="flex items-center space-x-2">
-            <Link to="/" className="flex items-center">
+    <header className="bg-white shadow-md sticky top-0 z-50">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-20">
+          {/* Logo */}
+          <div className="flex-shrink-0">
+            <Link to="/" className="flex items-center space-x-2">
               <img
                 src={logo}
                 alt="Hindavi Nursery Logo"
@@ -519,9 +540,9 @@ function Navbar() {
 
               <Link to="/cart" className="hover:text-green-600 flex items-center relative">
                 <ShoppingCart className="h-5 w-5" />
-                {cartCount > 0 && (
+                {cartItemsCount > 0 && (
                   <span className="absolute -top-2 -right-2 bg-green-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                    {cartCount}
+                    {cartItemsCount}
                   </span>
                 )}
               </Link>
@@ -575,52 +596,31 @@ function Navbar() {
 
               {isLoggedIn ? (
                 <div className="relative" ref={userMenuRef}>
-                  <button
-                    onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-                    className="hover:text-green-600 flex items-center"
-                  >
-                    {userData?.name ? (
-                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center text-white font-bold text-sm">
-                        {userData.name.charAt(0).toUpperCase()}
-                      </div>
-                    ) : (
-                      <User className="h-5 w-5" />
-                    )}
+                  <button onClick={() => setUserDropdownOpen(!userDropdownOpen)} className="flex items-center space-x-2 focus:outline-none">
+                    <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
+                      <User className="text-green-600" />
+                    </div>
+                    <ChevronDown className={`h-5 w-5 text-gray-600 transition-transform duration-200 ${userDropdownOpen ? 'transform rotate-180' : ''}`} />
                   </button>
-
                   {userDropdownOpen && (
-                    <div className="absolute right-0 mt-2 w-64 bg-white shadow-lg rounded-md py-2 z-50 border border-gray-100">
-                      {userData && (
-                        <div className="px-4 py-3 border-b border-gray-100">
-                          <p className="font-medium text-gray-800">{userData.name}</p>
-                          <p className="text-xs text-gray-500">{userData.email}</p>
-                          {userData.role === 'admin' && (
-                            <span className="inline-block mt-1 px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full">
-                              Admin
-                            </span>
-                          )}
-                        </div>
-                      )}
-                      <Link to="/profile" className="flex items-center gap-2 px-4 py-2 hover:bg-green-50">
-                        <User className="h-4 w-4" />
-                        <span>My Profile</span>
+                    <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-100 py-2">
+                      <div className="px-4 py-2 border-b border-gray-100">
+                        <p className="font-semibold text-gray-800">{userData?.name || 'Guest'}</p>
+                        <p className="text-sm text-gray-500 truncate">{userData?.email}</p>
+                      </div>
+                      <Link to="/profile" className="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-100">
+                        <User className="h-5 w-5 mr-3" /> My Profile
                       </Link>
-                      <Link to="/orders" className="flex items-center gap-2 px-4 py-2 hover:bg-green-50">
-                        <ShoppingBag className="h-4 w-4" />
-                        <span>My Orders</span>
+                      <Link to="/orders" className="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-100">
+                        <ShoppingBag className="h-5 w-5 mr-3" /> My Orders
                       </Link>
-                      {userData?.role !== 'user' && (
-                        <Link to="/admin" className="flex items-center gap-2 px-4 py-2 hover:bg-blue-50 text-blue-600">
-                          <Settings className="h-4 w-4" />
-                          <span>Admin Dashboard</span>
+                      {userData?.role === 'admin' && (
+                        <Link to="/admin" className="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-100">
+                          <Settings className="h-5 w-5 mr-3" /> Admin Dashboard
                         </Link>
                       )}
-                      <button
-                        onClick={handleLogout}
-                        className="w-full flex items-center gap-2 text-left px-4 py-2 hover:bg-green-50 text-red-600"
-                      >
-                        <LogOut className="h-4 w-4" />
-                        <span>Logout</span>
+                      <button onClick={handleLogout} className="w-full text-left flex items-center px-4 py-2 text-red-600 hover:bg-red-50">
+                        <LogOut className="h-5 w-5 mr-3" /> Logout
                       </button>
                     </div>
                   )}
@@ -638,9 +638,9 @@ function Navbar() {
 
               <Link to="/cart" className="hover:text-green-600 flex items-center relative p-1">
                 <ShoppingCart className="h-5 w-5" />
-                {cartCount > 0 && (
+                {cartItemsCount > 0 && (
                   <span className="absolute -top-2 -right-2 bg-green-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                    {cartCount}
+                    {cartItemsCount}
                   </span>
                 )}
               </Link>
