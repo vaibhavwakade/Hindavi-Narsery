@@ -28,35 +28,55 @@ function AdminDashboard() {
           headers: { Authorization: `Bearer ${token}` }
         }),
         fetch(`${API_BASE_URL}/api/categories`),
+        fetch(`${API_BASE_URL}/api/admin/stats`, { // New endpoint for stats
+          headers: { Authorization: `Bearer ${token}` }
+        })
       ]);
 
       let productCount = 0;
       let orderCount = 0;
       let categoryCount = 0;
+      let userCount = 0;
+      let totalRevenue = 0;
 
       // Handle products
       if (responses[0].status === 'fulfilled' && responses[0].value.ok) {
         const productsData = await responses[0].value.json();
         productCount = productsData.products?.length || 0;
+      } else {
+        toast.error('Failed to load product stats.');
       }
 
       // Handle orders
       if (responses[1].status === 'fulfilled' && responses[1].value.ok) {
         const ordersData = await responses[1].value.json();
         orderCount = ordersData.orders?.length || 0;
+      } else {
+        toast.error('Failed to load order stats.');
       }
 
       // Handle categories
       if (responses[2].status === 'fulfilled' && responses[2].value.ok) {
         const categoriesData = await responses[2].value.json();
         categoryCount = categoriesData.categories?.length || 0;
+      } else {
+        toast.error('Failed to load category stats.');
+      }
+
+      // Handle admin stats
+      if (responses[3].status === 'fulfilled' && responses[3].value.ok) {
+        const statsData = await responses[3].value.json();
+        userCount = statsData.userCount || 0;
+        totalRevenue = statsData.totalRevenue || 0;
+      } else {
+        toast.error('Failed to load user and revenue stats.');
       }
 
       setStats({
-        users: 5, // Static for now since we don't have a users API endpoint
+        users: userCount,
         products: productCount,
         orders: orderCount,
-        revenue: orderCount * 500, // Estimated revenue
+        revenue: totalRevenue,
       });
 
     } catch (error) {
@@ -93,7 +113,7 @@ function AdminDashboard() {
               <p className="text-3xl font-bold text-gray-800 mt-1">{stats.users}</p>
               <div className="flex items-center mt-2 text-xs text-green-600 font-medium">
                 <TrendingUp className="h-3 w-3 mr-1" />
-                <span>Active users</span>
+                <span>+2 this month</span>
               </div>
             </div>
             <div className="p-3 bg-blue-100 rounded-lg">
@@ -125,13 +145,13 @@ function AdminDashboard() {
             <div>
               <p className="text-sm text-gray-500 font-medium">Total Orders</p>
               <p className="text-3xl font-bold text-gray-800 mt-1">{stats.orders}</p>
-              <div className="flex items-center mt-2 text-xs text-green-600 font-medium">
+              <div className="flex items-center mt-2 text-xs text-red-600 font-medium">
                 <TrendingUp className="h-3 w-3 mr-1" />
-                <span>All time</span>
+                <span>-5 this month</span>
               </div>
             </div>
-            <div className="p-3 bg-purple-100 rounded-lg">
-              <ShoppingBag className="h-6 w-6 text-purple-600" />
+            <div className="p-3 bg-orange-100 rounded-lg">
+              <ShoppingBag className="h-6 w-6 text-orange-600" />
             </div>
           </div>
         </div>
@@ -140,11 +160,11 @@ function AdminDashboard() {
         <div className="bg-white rounded-xl shadow-md p-6 border border-gray-100 hover:shadow-lg transition-shadow">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-500 font-medium">Revenue</p>
-              <p className="text-3xl font-bold text-gray-800 mt-1">₹{stats.revenue.toLocaleString()}</p>
+              <p className="text-sm text-gray-500 font-medium">Total Revenue</p>
+              <p className="text-3xl font-bold text-gray-800 mt-1">₹{stats.revenue.toFixed(2)}</p>
               <div className="flex items-center mt-2 text-xs text-green-600 font-medium">
                 <TrendingUp className="h-3 w-3 mr-1" />
-                <span>Estimated</span>
+                <span>+12% this month</span>
               </div>
             </div>
             <div className="p-3 bg-yellow-100 rounded-lg">

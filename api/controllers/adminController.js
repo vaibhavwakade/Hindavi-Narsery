@@ -99,19 +99,31 @@ exports.updateUser = async (req, res, next) => {
     }
 
     await user.save();
-
-    // Return user without password
-    const userResponse = user.toJSON();
-    delete userResponse.password;
-
-    res.json({ message: 'User updated successfully', user: userResponse });
+    res.json({ message: 'User updated successfully', user });
   } catch (error) {
     console.error('Error updating user:', error);
     next(error);
   }
 };
 
-// Delete a user and their orders
+// Get dashboard statistics
+exports.getStats = async (req, res, next) => {
+  try {
+    const userCount = await User.count();
+    const totalRevenue = await Order.sum('totalAmount');
+
+    res.json({
+      message: 'Stats fetched successfully',
+      userCount,
+      totalRevenue: totalRevenue || 0,
+    });
+  } catch (error) {
+    console.error('Error fetching stats:', error);
+    next(error);
+  }
+};
+
+// Delete a user by ID
 exports.deleteUser = async (req, res, next) => {
   try {
     const user = await User.findByPk(req.params.id);

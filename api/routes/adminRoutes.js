@@ -9,6 +9,10 @@ router.get('/users', authenticateToken, isAdmin, adminController.getAllUsers);
 router.get('/users/:id', authenticateToken, isAdmin, adminController.getUserById);
 router.put('/users/:id', authenticateToken, isAdmin, adminController.updateUser);
 router.delete('/users/:id', authenticateToken, isAdmin, adminController.deleteUser);
+
+// New route for dashboard stats
+router.get('/stats', authenticateToken, isAdmin, adminController.getStats);
+
 router.put('/users/:id/role', authenticateToken, isAdmin, adminController.updateUserRole);
 router.get('/orders', authenticateToken, isAdmin, adminController.getAllOrders);
 
