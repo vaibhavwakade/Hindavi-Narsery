@@ -41,31 +41,38 @@ if (process.env.CLOUDINARY_CLOUD_NAME && process.env.CLOUDINARY_API_KEY && proce
 const app = express();
 
 // Middleware - CORS configuration for production
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://localhost:3000',
+  'https://hindavi-nursery.vercel.app',
+  'https://hindavi-nursery-frontend.vercel.app'
+];
+
 app.use(cors({
   origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl requests)
+    console.log('Request origin:', origin);
+    
+    // Allow requests with no origin (like mobile apps or curl requests) 
     if (!origin) return callback(null, true);
     
-    // List of allowed origins
-    const allowedOrigins = [
-      'http://localhost:5173',
-      'http://localhost:3000',
-      'https://hindavi-nursery.vercel.app',
-      'https://hindavi-nursery-frontend.vercel.app'
-    ];
-    
-    // Allow any vercel.app domain
+    // Allow any vercel.app domain or specific allowed origins
     if (origin.includes('.vercel.app') || allowedOrigins.includes(origin)) {
       return callback(null, true);
     }
     
-    // Block other origins
+    // For development, allow localhost
+    if (origin.includes('localhost')) {
+      return callback(null, true);
+    }
+    
+    console.log('Origin blocked:', origin);
     const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
     return callback(new Error(msg), false);
   },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true
+  allowedHeaders: ['Content-Type', 'Authorization', 'x-requested-with'],
+  credentials: true,
+  optionsSuccessStatus: 200
 }));
 app.use(express.json());
 
@@ -87,6 +94,22 @@ app.get('/api/health', (req, res) => {
   res.json({ 
     status: 'ok',
     message: 'Server is running',
+    timestamp: new Date().toISOString(),
+    cors: {
+      origin: req.headers.origin || 'no-origin',
+      allowed: true
+    }
+  });
+});
+
+// Environment check route (for debugging)
+app.get('/api/env-check', (req, res) => {
+  res.json({ 
+    message: 'Environment check',
+    hasDatabase: !!(process.env.DB_HOST && process.env.DB_NAME),
+    hasCloudinary: !!(process.env.CLOUDINARY_CLOUD_NAME),
+    hasJWT: !!(process.env.JWT_SECRET),
+    nodeEnv: process.env.NODE_ENV || 'development',
     timestamp: new Date().toISOString()
   });
 });
