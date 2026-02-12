@@ -5,7 +5,6 @@ import { toast } from 'react-toastify';
 import { Lock, LogOut, Package, Leaf, Settings, BarChart3, Users, ShoppingBag, Sprout, User2, UserCog2, Stars } from 'lucide-react';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import AdminDashboard from './AdminDashboard';
-import { API_BASE_URL } from '../../config/api';
 
 function AdminPanel() {
   const navigate = useNavigate();
@@ -26,7 +25,7 @@ function AdminPanel() {
         }
 
         // Fetch user profile to check role
-        const userRes = await axios.get(`${API_BASE_URL}/api/auth/profile`, {
+        const userRes = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/auth/profile`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
