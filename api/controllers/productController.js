@@ -1,27 +1,30 @@
-const Product = require('../models/Product');
-const Category = require('../models/Category');
-const cloudinary = require('cloudinary').v2;
-const { Op } = require('sequelize');
+const Product = require("../models/Product");
+const Category = require("../models/Category");
+const cloudinary = require("cloudinary").v2;
+const { Op } = require("sequelize");
 
 exports.createProduct = async (req, res, next) => {
   try {
     const { name, description, price, category, stock, size } = req.body;
     const categoryExists = await Category.findByPk(category);
     if (!categoryExists) {
-      const error = new Error('Category not found');
+      const error = new Error("Category not found");
       error.status = 404;
       throw error;
     }
 
     let imageUrls = [];
     if (req.files && req.files.length > 0) {
-      const uploadPromises = req.files.map(file =>
-        new Promise((resolve, reject) => {
-          cloudinary.uploader.upload_stream({ resource_type: 'image' }, (error, result) => {
-            if (error) reject(new Error('Cloudinary upload failed'));
-            resolve(result.secure_url);
-          }).end(file.buffer);
-        })
+      const uploadPromises = req.files.map(
+        (file) =>
+          new Promise((resolve, reject) => {
+            cloudinary.uploader
+              .upload_stream({ resource_type: "image" }, (error, result) => {
+                if (error) reject(new Error("Cloudinary upload failed"));
+                resolve(result.secure_url);
+              })
+              .end(file.buffer);
+          }),
       );
       imageUrls = await Promise.all(uploadPromises);
     }
@@ -33,10 +36,10 @@ exports.createProduct = async (req, res, next) => {
       categoryId: category, // Sequelize uses categoryId defaults
       imageUrls,
       stock,
-      size
+      size,
     });
 
-    res.status(201).json({ message: 'Product created', product });
+    res.status(201).json({ message: "Product created", product });
   } catch (error) {
     next(error);
   }
@@ -44,7 +47,7 @@ exports.createProduct = async (req, res, next) => {
 
 exports.getAllProducts = async (req, res, next) => {
   try {
-    const { category, search, page = 1, limit = 10 } = req.query;
+    const { category, search, page = 1, limit = 100000 } = req.query;
     const whereClause = {};
 
     if (category) whereClause.categoryId = category;
@@ -54,24 +57,29 @@ exports.getAllProducts = async (req, res, next) => {
 
     const { count, rows: products } = await Product.findAndCountAll({
       where: whereClause,
-      include: [{ model: Category, as: 'categoryDetails' }],
+      include: [{ model: Category, as: "categoryDetails" }],
       limit: parseInt(limit),
-      offset: parseInt(offset)
+      offset: parseInt(offset),
     });
 
     // Ensure imageUrls is properly parsed as array
-    const processedProducts = products.map(product => ({
+    const processedProducts = products.map((product) => ({
       ...product.toJSON(),
-      imageUrls: Array.isArray(product.imageUrls) 
-        ? product.imageUrls 
-        : product.imageUrls 
-        ? (typeof product.imageUrls === 'string' 
-          ? JSON.parse(product.imageUrls) 
-          : [product.imageUrls])
-        : []
+      imageUrls: Array.isArray(product.imageUrls)
+        ? product.imageUrls
+        : product.imageUrls
+          ? typeof product.imageUrls === "string"
+            ? JSON.parse(product.imageUrls)
+            : [product.imageUrls]
+          : [],
     }));
 
-    res.json({ products: processedProducts, total: count, page: parseInt(page), limit: parseInt(limit) });
+    res.json({
+      products: processedProducts,
+      total: count,
+      page: parseInt(page),
+      limit: parseInt(limit),
+    });
   } catch (error) {
     next(error);
   }
@@ -80,10 +88,10 @@ exports.getAllProducts = async (req, res, next) => {
 exports.getProductById = async (req, res, next) => {
   try {
     const product = await Product.findByPk(req.params.id, {
-      include: [{ model: Category, as: 'categoryDetails' }]
+      include: [{ model: Category, as: "categoryDetails" }],
     });
     if (!product) {
-      const error = new Error('Product not found');
+      const error = new Error("Product not found");
       error.status = 404;
       throw error;
     }
@@ -91,13 +99,13 @@ exports.getProductById = async (req, res, next) => {
     // Ensure imageUrls is properly parsed as array
     const processedProduct = {
       ...product.toJSON(),
-      imageUrls: Array.isArray(product.imageUrls) 
-        ? product.imageUrls 
-        : product.imageUrls 
-        ? (typeof product.imageUrls === 'string' 
-          ? JSON.parse(product.imageUrls) 
-          : [product.imageUrls])
-        : []
+      imageUrls: Array.isArray(product.imageUrls)
+        ? product.imageUrls
+        : product.imageUrls
+          ? typeof product.imageUrls === "string"
+            ? JSON.parse(product.imageUrls)
+            : [product.imageUrls]
+          : [],
     };
 
     res.json(processedProduct);
@@ -111,7 +119,7 @@ exports.updateProduct = async (req, res, next) => {
     const { name, description, price, category, stock, size } = req.body;
     const product = await Product.findByPk(req.params.id);
     if (!product) {
-      const error = new Error('Product not found');
+      const error = new Error("Product not found");
       error.status = 404;
       throw error;
     }
@@ -119,7 +127,7 @@ exports.updateProduct = async (req, res, next) => {
     if (category) {
       const categoryExists = await Category.findByPk(category);
       if (!categoryExists) {
-        const error = new Error('Category not found');
+        const error = new Error("Category not found");
         error.status = 404;
         throw error;
       }
@@ -127,13 +135,16 @@ exports.updateProduct = async (req, res, next) => {
 
     let imageUrls = product.imageUrls;
     if (req.files && req.files.length > 0) {
-      const uploadPromises = req.files.map(file =>
-        new Promise((resolve, reject) => {
-          cloudinary.uploader.upload_stream({ resource_type: 'image' }, (error, result) => {
-            if (error) reject(new Error('Cloudinary upload failed'));
-            resolve(result.secure_url);
-          }).end(file.buffer);
-        })
+      const uploadPromises = req.files.map(
+        (file) =>
+          new Promise((resolve, reject) => {
+            cloudinary.uploader
+              .upload_stream({ resource_type: "image" }, (error, result) => {
+                if (error) reject(new Error("Cloudinary upload failed"));
+                resolve(result.secure_url);
+              })
+              .end(file.buffer);
+          }),
       );
       imageUrls = await Promise.all(uploadPromises);
     }
@@ -147,7 +158,7 @@ exports.updateProduct = async (req, res, next) => {
     if (size) product.size = size;
 
     await product.save();
-    res.json({ message: 'Product updated', product });
+    res.json({ message: "Product updated", product });
   } catch (error) {
     next(error);
   }
@@ -157,12 +168,12 @@ exports.deleteProduct = async (req, res, next) => {
   try {
     const product = await Product.findByPk(req.params.id);
     if (!product) {
-      const error = new Error('Product not found');
+      const error = new Error("Product not found");
       error.status = 404;
       throw error;
     }
     await product.destroy();
-    res.json({ message: 'Product deleted' });
+    res.json({ message: "Product deleted" });
   } catch (error) {
     next(error);
   }

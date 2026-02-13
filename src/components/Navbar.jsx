@@ -276,7 +276,7 @@ function Navbar() {
           headers: { Authorization: `Bearer ${token}` },
         },
       );
-      setUserData(response.data);
+      setUserData(response.data.user);
     } catch (error) {
       console.error("Error fetching user data:", error);
       // Handle token expiration or invalid token
@@ -293,7 +293,7 @@ function Navbar() {
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("role");
-    setIsLoggedIn(false);
+    isLoggedIn(false);
     setUserData(null);
     setMobileMenuOpen(false);
     navigate("/login");
@@ -660,7 +660,7 @@ function Navbar() {
                   >
                     {userData?.name ? (
                       <div className="w-8 h-8 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center text-white font-bold text-sm">
-                        {userData.name.charAt(0).toUpperCase()}
+                        {userData.name?.charAt(0).toUpperCase()}
                       </div>
                     ) : (
                       <User className="h-5 w-5" />
@@ -825,7 +825,7 @@ function Navbar() {
                 <div className="mb-6 p-4 bg-gray-50 rounded-lg">
                   <div className="flex items-center space-x-3">
                     <div className="w-10 h-10 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center text-white font-bold">
-                      {userData.name.charAt(0).toUpperCase()}
+                      {userData.name?.charAt(0).toUpperCase()}
                     </div>
                     <div className="flex-1">
                       <p className="font-medium">{userData.name}</p>

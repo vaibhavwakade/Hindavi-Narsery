@@ -231,7 +231,7 @@ function ProductReviewSection({ productId }) {
           </h3>
           <div className="space-y-6">
             {otherReviews.map((review) => (
-              <div key={review._id} className="border-b border-green-100 pb-4">
+              <div key={review.id} className="border-b border-green-100 pb-4">
                 <div className="flex items-center text-yellow-500">
                   {[...Array(review.rating)].map((_, i) => (
                     <Star key={i} size={16} fill="currentColor" />
